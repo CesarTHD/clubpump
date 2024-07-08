@@ -19,7 +19,7 @@ export default function Home() {
   }
   
   const sendData = async() => {
-    console.log(await listClients(user.cpf_cnpj));
+    console.log(listClients(user.cpf_cnpj));
     // createCustomer(user.email, user.name, user.phone, user.phone_prefix, user.cpf_cnpj);
   }
   return (
