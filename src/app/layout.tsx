@@ -16,9 +16,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script type="text/javascript" src="https://js.iugu.com/v2"></script>
-      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
