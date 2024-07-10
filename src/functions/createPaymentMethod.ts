@@ -10,7 +10,7 @@ async function createPaymentMethod() {
     };
 
     //customer in route
-    fetch('https://api.iugu.com/v1/customers/4C2DC7D2A99D4EEEA0543B8193AB5151/payment_methods?api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533', options)
+    fetch(`https://api.iugu.com/v1/customers/4C2DC7D2A99D4EEEA0543B8193AB5151/payment_methods?api_token=${process.env.NEXT_PUBLIC_API_TOKEN}`, options)
         .then(response => response.json())
         .then(response => console.log(response))
         .catch(err => console.error(err));
