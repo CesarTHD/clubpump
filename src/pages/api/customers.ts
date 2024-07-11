@@ -11,7 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const urlApi = `https://api.iugu.com/v1/customers?query=cpf_cnpj%3A${cpf}&api_token=${process.env.NEXT_PUBLIC_API_TOKEN}`;
+    const urlApi = `https://api.iugu.com/v1/customers?query=cpf_cnpj%3A${cpf}&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+    // const urlApi = `https://api.iugu.com/v1/customers?query=cpf_cnpj%3A${cpf}&api_token=${process.env.NEXT_PUBLIC_API_TOKEN}`;
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },
     });
