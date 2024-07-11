@@ -1,30 +1,44 @@
-"use client";
+// app/page.tsx
 
-import createCustomer from "@/functions/createCustomer";
-import listClients from "@/functions/listClients";
-import { User } from "@/types/user";
+'use client';
+import { useState } from 'react';
+import axios from 'axios';
+import Customer from '@/components/Customer';
+import CustomerForm from '@/components/CustomerForm';
+import { TypeCustomer } from '@/types/Customer';
+import { FormValues } from '@/types/FormValues';
 
-export default function Home() {
-  const user:User = {
-    name: 'César Tallys Henrique Duarte',
-    cpf_cnpj: '08247288311',
-    phone_prefix: 61,
-    phone: 998374202,
-    email: 'cesartallys5@gmail.com',
-    consultant: 'Gabriel',
-    card_number: '',
-    card_name: '',
-    card_data: '',
-    card_code: '',
-  }
-  
-  const sendData = async() => {
-    console.log(listClients(user.cpf_cnpj));
-    // createCustomer(user.email, user.name, user.phone, user.phone_prefix, user.cpf_cnpj);
-  }
+const Home = () => {
+  const [customers, setCustomers] = useState<TypeCustomer[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const fetchCustomers = async (customer: FormValues) => {
+    setLoading(true);
+    setError('');
+    try {
+      const urlApi = `/api/customers?cpf=${customer.cpf_cnpj}`;
+      const { data } = await axios.get(urlApi, {
+        headers: { accept: 'application/json', 'content-type': 'application/json' },
+      });
+
+      setCustomers(data.items);
+    } catch (err) {
+      setCustomers([]);
+      setError('Erro ao buscar clientes.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <button onClick={() => {sendData()}} className="border border-white py-2 px-4">Comprar</button>
-    </main>
+    <div>
+      <CustomerForm onSubmit={fetchCustomers} />
+      {loading && <p>Carregando...</p>}
+      {error && <p>{error}</p>}
+      <Customer customers={customers} />
+    </div>
   );
-}
+};
+
+export default Home;

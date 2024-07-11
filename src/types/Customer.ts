@@ -1,0 +1,23 @@
+export type TypeCustomer = {
+    id: string,
+    email: string,
+    name: string,
+    notes: string | null,
+    created_at: string,
+    updated_at: string,
+    cc_emails: string | null,
+    cpf_cnpj: string,
+    zip_code: string | null,
+    number: string | null,
+    complement: string | null,
+    phone: string,
+    phone_prefix: string,
+    custom_variables: [],
+    payment_methods: [],
+    default_payment_method_id: string | null,
+    proxy_payments_from_customer_id: string | null,
+    city: string | null,
+    state: string | null,
+    district: string | null,
+    street: string | null
+}
