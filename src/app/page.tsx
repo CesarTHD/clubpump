@@ -15,6 +15,7 @@ const Home = () => {
 
   const fetchCustomers = async (customer: FormValues) => {
     setLoading(true);
+    setCustomers([]);
     setError('');
     try {
       const urlApi = `/api/customers?cpf=${customer.cpf_cnpj}`;
@@ -24,7 +25,6 @@ const Home = () => {
 
       setCustomers(data.items);
     } catch (err) {
-      setCustomers([]);
       setError('Erro ao buscar clientes.');
     } finally {
       setLoading(false);
@@ -32,7 +32,7 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className='flex flex-col md:flex-row gap-8 justify-center'>
       <CustomerForm onSubmit={fetchCustomers} />
       {loading && <p>Carregando...</p>}
       {error && <p>{error}</p>}

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
+import pump from '../../public/assets/pump.png'
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <header className="flex justify-center">
+          <Image src={pump} alt="Logo Club Pump" width={150} height={200} />
+        </header>
+        {children}
+        
+        </body>
     </html>
   );
 }

@@ -11,10 +11,10 @@ const Customer: React.FC<CustomerProps> = ({ customers }) => {
   return (
     <div>
       {customers.map((customer, index) => (
-        <div key={index}>
-          <p>{customer.name}</p>
-          <p>{customer.cpf_cnpj}</p>
-        </div>
+        <ul key={index}>
+          <li>{customer.name}</li>
+          <li>{customer.cpf_cnpj}</li>
+        </ul>
       ))}
     </div>
   );

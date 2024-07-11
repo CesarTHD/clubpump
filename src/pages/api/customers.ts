@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers: { accept: 'application/json', 'content-type': 'application/json' },
     });
 
-    res.status(200).json(response.data);
+    response.data.items.length === 0 ? res.status(500).json({ error: 'Usuário não encontrado' }) : res.status(200).json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar clientes' });
   }

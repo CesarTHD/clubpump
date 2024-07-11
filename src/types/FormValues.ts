@@ -4,7 +4,10 @@ export type FormValues = {
         lastName: string;
     }
     cpf_cnpj: string;
-    number: string;
+    telephone: string;
     email: string;
     consultantName: string;
+    number: string;
+    expiration: string;
+    cvv: string;
 }
