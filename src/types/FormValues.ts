@@ -5,6 +5,8 @@ export type FormValues = {
     }
     cpf_cnpj: string;
     password: string;
+    confirmPassword: string;
+    cardHolderName: string;
     telephone: string;
     email: string;
     consultantName: string;

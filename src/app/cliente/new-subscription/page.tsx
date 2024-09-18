@@ -9,14 +9,13 @@ import { Button } from '@/components/catalyst-ui-kit/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import loadingIcon from '@/assets/loading.png';
-import tokenizeCard from '@/functions/tokenizeCard';
 import axios from 'axios';
-
 
 const CustomerForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+
   const searchParams = useSearchParams();
   const userId = searchParams?.get("userId");
 
@@ -51,7 +50,6 @@ const CustomerForm = () => {
     }
   };
 
-
   return (
     <div>
       <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(handleFormSubmit)}>
@@ -84,29 +82,59 @@ const CustomerForm = () => {
 
           <div className='border rounded-lg p-8 mt-8'>
             <Fieldset>
-              <Legend><p className='text-xl '>Informações de pagamento</p></Legend>
+              <Legend><span className='text-xl '>Informações de pagamento</span></Legend>
               <Text>Informe os dados de cartão de crédito para ativar sua assinatura.</Text>
               <div className='mt-4'>
                 <Field>
-                  <Label><p className=''>Número do cartão de crédito:</p></Label>
-                  {/* <Input {...register('number')} type='text' placeholder='0000 0000 0000 0000' value={"5502092903811171"} /> */}
-                  <Input {...register('number')} type='text' placeholder='0000 0000 0000 0000' />
+                  <Label><span className=''>Número do cartão de crédito:</span></Label>
+                  <Input
+                    {...register('number', {
+                      required: "Número do cartão é obrigatório",
+                      minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                      maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                      pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                    })}
+                    type='text'
+                    placeholder='0000 0000 0000 0000'
+                  />
+                  {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
                 </Field>
               </div>
               <div className='mt-4'>
                 <Field>
-                  <Label><p className=''>Nome impresso no cartão:</p></Label>
-                  <Input {...register('name.firstName')} type='text' />
+                  <Label><span className=''>Nome impresso no cartão:</span></Label>
+                  <Input
+                    {...register('name.firstName', { required: "Nome é obrigatório" })}
+                    type='text'
+                  />
+                  {errors.name?.firstName && <p className='text-red-500 text-sm'>*{errors.name.firstName.message}</p>}
                 </Field>
               </div>
               <div className='mt-4 flex gap-4'>
                 <Field className='w-full'>
-                  <Label><p className=''>Data de vencimento:</p></Label>
-                  <Input {...register('expiration')} type='text' placeholder='MM/AA' />
+                  <Label><span className=''>Data de vencimento:</span></Label>
+                  <Input
+                    {...register('expiration', {
+                      required: "Data de vencimento é obrigatória",
+                      pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{2})$/, message: "Formato inválido (MM/AA)" }
+                    })}
+                    type='text'
+                    placeholder='MM/AA'
+                  />
+                  {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
                 </Field>
                 <Field className='w-full'>
-                  <Label><p className=''>Código de segurança:</p></Label>
-                  <Input {...register('cvv')} type='current-password' />
+                  <Label><span className=''>Código de segurança:</span></Label>
+                  <Input
+                    {...register('cvv', {
+                      required: "CVV é obrigatório",
+                      minLength: { value: 3, message: "CVV deve ter no mínimo 3 dígitos" },
+                      maxLength: { value: 4, message: "CVV deve ter no máximo 4 dígitos" },
+                      pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                    })}
+                    type='current-password'
+                  />
+                  {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
                 </Field>
               </div>
               <p className='mt-6 text-xs leading-4'>
@@ -127,7 +155,7 @@ const CustomerForm = () => {
             </Fieldset>
             {error && (
               <div className='w-full'>
-                <p className='text-sm text-red-500'>
+                <p className='text-red-500 text-sm'>*
                   {error}
                 </p>
               </div>
@@ -136,14 +164,6 @@ const CustomerForm = () => {
 
         </div>
       </form>
-      <div className="flex flex-col md:flex-row">
-        <div className="flex w-full justify-center py-20">
-          <Image src={"https://clubpump.com.br/wp-content/uploads/2019/03/logo-club-pump.jpg"} width={220} height={100} alt="Club Pump" />
-        </div>
-        <div className="flex w-full justify-center">
-          <Image src={"https://clubpump.com.br/wp-content/uploads/2023/08/FUNDO-ESCURO.png"} width={250} height={100} alt="Club Pump" />
-        </div>
-      </div>
     </div>
   );
 };

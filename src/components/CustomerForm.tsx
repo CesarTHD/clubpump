@@ -14,18 +14,17 @@ type CustomerFormProps = {
   onSubmit: (data: any) => void;
 };
 
-
 const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, handleSubmit, watch,formState: { errors } } = useForm<FormValues>();
 
   const submit: SubmitHandler<FormValues> = (data) => {
     onSubmit(data);
   };
 
   return (
-    <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(onSubmit)}>
+    <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(submit)}>
       <div className='w-full md:w-1/2 border p-8 rounded-lg'>
         <Fieldset>
           <Legend><p className='text-xl'>Informações do cliente</p></Legend>
@@ -34,41 +33,96 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
             <div className='flex gap-4 mt-16'>
               <Field className='w-full'>
                 <Label><p className=''>Nome:</p></Label>
-                <Input {...register('name.firstName')} type='text' />
+                <Input
+                  {...register('name.firstName', { required: "Nome é obrigatório" })}
+                  type='text'
+                />
+                {errors.name?.firstName && <p className='text-red-500 text-sm'>*{errors.name.firstName.message}</p>}
               </Field>
               <Field className='w-full'>
                 <Label><p className=''>Sobrenome:</p></Label>
-                <Input {...register('name.lastName')} type='text' />
+                <Input
+                  {...register('name.lastName', { required: "Sobrenome é obrigatório" })}
+                  type='text'
+                />
+                {errors.name?.lastName && <p className='text-red-500 text-sm'>*{errors.name.lastName.message}</p>}
               </Field>
             </div>
             <div className='flex gap-4'>
               <Field className='w-full'>
                 <Label><p className=''>Email:</p></Label>
-                <Input {...register('email')} type='email' />
+                <Input
+                  {...register('email', {
+                    required: "Email é obrigatório",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Email inválido"
+                    }
+                  })}
+                  type='email'
+                />
+                {errors.email && <p className='text-red-500 text-sm'>*{errors.email.message}</p>}
               </Field>
               <Field className='w-full'>
                 <Label><p className=''>Celular:</p></Label>
-                <Input {...register('telephone')} type='text' />
+                <Input
+                  {...register('telephone', {
+                    required: "Celular é obrigatório",
+                    pattern: {
+                      value: /^\d{10,11}$/,
+                      message: "Celular inválido (deve ter 10 ou 11 dígitos)"
+                    }
+                  })}
+                  type='text'
+                />
+                {errors.telephone && <p className='text-red-500 text-sm'>*{errors.telephone.message}</p>}
               </Field>
             </div>
             <div className="flex gap-4">
               <Field className='w-full'>
                 <Label><p className=''>CPF/CNPJ:</p></Label>
-                <Input {...register('cpf_cnpj')} type='text' />
+                <Input
+                  {...register('cpf_cnpj', {
+                    required: "CPF/CNPJ é obrigatório",
+                    pattern: {
+                      value: /^\d{11}$|^\d{14}$/,
+                      message: "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos"
+                    }
+                  })}
+                  type='text'
+                />
+                {errors.cpf_cnpj && <p className='text-red-500 text-sm'>*{errors.cpf_cnpj.message}</p>}
               </Field>
               <Field className='w-full'>
                 <Label><p className=''>Nome do consultor:</p></Label>
-                <Input {...register('consultantName')} type='text' />
+                <Input
+                  {...register('consultantName', { required: "Nome do consultor é obrigatório" })}
+                  type='text'
+                />
+                {errors.consultantName && <p className='text-red-500 text-sm'>*{errors.consultantName.message}</p>}
               </Field>
             </div>
             <div className="flex gap-4">
               <Field className='w-full'>
                 <Label><p className=''>Senha:</p></Label>
-                <Input {...register('password')} type='password' />
+                <Input
+                  {...register('password', {
+                    required: "Senha é obrigatória",
+                    minLength: { value: 6, message: "Senha deve ter pelo menos 6 caracteres" }
+                  })}
+                  type='password'
+                />
+                {errors.password && <p className='text-red-500 text-sm'>*{errors.password.message}</p>}
               </Field>
               <Field className='w-full'>
                 <Label><p className=''>Confirmar senha:</p></Label>
-                <Input {...register('password')} type='password' />
+                <Input
+                  {...register('confirmPassword', {
+                    validate: (value) => value === watch('password') || "Senhas não coincidem"
+                  })}
+                  type='password'
+                />
+                {errors.confirmPassword && <p className='text-red-500 text-sm'>*{errors.confirmPassword.message}</p>}
               </Field>
             </div>
 
@@ -122,23 +176,59 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ onSubmit }) => {
             <div className='mt-4'>
               <Field>
                 <Label><p className=''>Número do cartão de crédito:</p></Label>
-                <Input {...register('number')} type='text' placeholder='0000 0000 0000 0000' />
+                <Input
+                  {...register('number', {
+                    required: "Número do cartão é obrigatório",
+                    pattern: {
+                      value: /^[0-9\s]+$/,
+                      message: "Número do cartão deve conter apenas números e espaços"
+                    }
+                  })}
+                  type='text'
+                  placeholder='0000 0000 0000 0000'
+                />
+                {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
               </Field>
             </div>
             <div className='mt-4'>
               <Field>
                 <Label><p className=''>Nome impresso no cartão:</p></Label>
-                <Input {...register('consultantName')} type='text' />
+                <Input
+                  {...register('cardHolderName', { required: "Nome impresso no cartão é obrigatório" })}
+                  type='text'
+                />
+                {errors.cardHolderName && <p className='text-red-500 text-sm'>*{errors.cardHolderName.message}</p>}
               </Field>
             </div>
             <div className='mt-4 flex gap-4'>
               <Field className='w-full'>
                 <Label><p className=''>Data de vencimento:</p></Label>
-                <Input {...register('expiration')} type='text' placeholder='MM/AAAA' />
+                <Input
+                  {...register('expiration', {
+                    required: "Data de vencimento é obrigatória",
+                    pattern: {
+                      value: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
+                      message: "Formato inválido (MM/AA)"
+                    }
+                  })}
+                  type='text'
+                  placeholder='MM/AAAA'
+                />
+                {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
               </Field>
               <Field className='w-full'>
                 <Label><p className=''>Código de segurança:</p></Label>
-                <Input {...register('name.lastName')} type='current-password' />
+                <Input
+                  {...register('cvv', {
+                    required: "Código de segurança é obrigatório",
+                    pattern: {
+                      value: /^[0-9]{3,4}$/,
+                      message: "Código de segurança deve ter 3 ou 4 dígitos"
+                    }
+                  })}
+                  type='password'
+                />
+                {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
               </Field>
             </div>
             <p className='mt-6 text-xs leading-4'>

@@ -6,6 +6,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { dataCard }: any = req.query;
     const dataJson:FormValues = JSON.parse(dataCard);
 
+    let cardNumber = dataJson?.number.replace(" ", '');
+
     let nameParts = dataJson.name.firstName.split(" ");
     let last_name = nameParts.pop();
     let first_name = nameParts.join(" ");
@@ -22,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         method: 'POST',
         body: JSON.stringify({
             data: {
-                number: dataJson?.number,
+                number: cardNumber,
                 verification_value: dataJson?.cvv,
                 first_name,
                 last_name,

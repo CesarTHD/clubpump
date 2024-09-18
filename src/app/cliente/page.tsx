@@ -89,9 +89,9 @@ const Login = () => {
                 <Label><span className='text-white'>Senha:</span></Label>
                 <Input {...register('password')} type='password' />
               </Field>
-              <Button type='submit' disabled={loading} className='hover:cursor-pointer min-w-32'>
+              <Button type='submit' disabled={loading === true} className='hover:cursor-pointer min-w-32'>
                 {!loading ? (
-                  <p>Entrar</p>
+                  <span>Entrar</span>
                 ) : (
                   <Image
                     src={loadingIcon}

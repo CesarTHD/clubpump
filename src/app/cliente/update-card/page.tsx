@@ -24,7 +24,7 @@ const UpdateCard = () => {
     const userId = searchParams?.get("userId");
     const invoiceId = searchParams?.get("invoiceId");
 
-    const { register, handleSubmit } = useForm<FormValues>();
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
     const onSubmit = async (data: FormValues) => {
         setLoading(true);
@@ -97,23 +97,40 @@ const UpdateCard = () => {
                         <div className='mt-4'>
                             <Field>
                                 <Label><p className=''>Número do cartão de crédito:</p></Label>
-                                <Input {...register('number')} type='text' placeholder='0000 0000 0000 0000' />
+                                <Input {...register('number', {
+                                    required: "Número do cartão é obrigatório",
+                                    minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                                    maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                                    pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                                })} type='text' placeholder='0000 0000 0000 0000' />
+                                {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
                             </Field>
                         </div>
                         <div className='mt-4'>
                             <Field>
                                 <Label><p className=''>Nome impresso no cartão:</p></Label>
-                                <Input {...register('consultantName')} type='text' />
+                                <Input {...register('name.firstName', { required: "Nome é obrigatório" })} type='text' />
+                                {errors.name?.firstName && <p className='text-red-500 text-sm'>*{errors.name.firstName.message}</p>}
                             </Field>
                         </div>
                         <div className='mt-4 flex gap-4'>
                             <Field className='w-full'>
                                 <Label><p className=''>Data de vencimento:</p></Label>
-                                <Input {...register('expiration')} type='text' placeholder='MM/AAAA' />
+                                <Input {...register('expiration', {
+                                    required: "Data de vencimento é obrigatória",
+                                    pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{2})$/, message: "Formato inválido (MM/AA)" }
+                                })} type='text' placeholder='MM/AAAA' />
+                                {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
                             </Field>
                             <Field className='w-full'>
                                 <Label><p className=''>Código de segurança:</p></Label>
-                                <Input {...register('name.lastName')} type='current-password' />
+                                <Input {...register('cvv', {
+                                    required: "CVV é obrigatório",
+                                    minLength: { value: 3, message: "CVV deve ter no mínimo 3 dígitos" },
+                                    maxLength: { value: 4, message: "CVV deve ter no máximo 4 dígitos" },
+                                    pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                                })} type='current-password' />
+                                {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
                             </Field>
                         </div>
                         <p className='mt-6 text-xs leading-4'>

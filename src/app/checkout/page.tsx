@@ -2,15 +2,23 @@
 import CustomerForm from "@/components/CustomerForm";
 import Header from "@/components/Header";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Checkout = () => {
+    const router = useRouter();
+    
     const onSubmit = () => {
 
     }
+
+
+    
     return (
         <div>
             <div className="flex justify-center py-4">
-                <Image src={"https://clubpump.com.br/wp-content/uploads/2019/03/logo-club-pump.jpg"} width={150} height={100} alt="Club Pump" />
+                <button onClick={() => {router.push("/")}}>
+                    <Image src={"https://clubpump.com.br/wp-content/uploads/2019/03/logo-club-pump.jpg"} width={150} height={100} alt="Club Pump" />
+                </button>
             </div>
             <div className="flex justify-center mt-6">
                 <CustomerForm onSubmit={onSubmit} />
