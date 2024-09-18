@@ -1,0 +1,29 @@
+
+options = {
+	0: loading,
+	1: OK,
+	2: Nova assinatura,
+	3: Nova fatura,
+	4: Novo cartão,
+}
+
+suspended === false && recent_invoices.filter(due_date === signature.created_at).status.contains("paid") && customer_id.defaultPayment !== null { OK }
+
+
+else{
+	suspended === true { "Necessário criar uma nova assinatura" };
+	!recent_invoices[length].status.contains("paid") { "Sua última fatura não foi paga.";
+		criar nova fatura, dentro dessa assinatura;
+
+	defaultPayment = null { "Cadastre um novo cartão." }
+ }
+
+
+
+// Vendedor
+custom_variables": [
+        {
+          "name": "IVAN DIB",
+          "value": ""
+        }
+      ],
