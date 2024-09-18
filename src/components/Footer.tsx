@@ -10,12 +10,6 @@ const Footer = () => {
     const { user, setUser }: any = useContext(useAuthContext);
 
 
-    const logout = () => {
-        localStorage.removeItem("club.userId");
-        localStorage.removeItem("club.user");
-        setUser(null);
-        // router.push("/");
-    }
 
     return (
         <footer className="">

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useContext } from 'react';
 import { useAuthContext } from '@/context/useAuth';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
   const {user}:any = useContext(useAuthContext);
 
   try {

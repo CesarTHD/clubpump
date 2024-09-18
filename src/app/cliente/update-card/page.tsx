@@ -13,11 +13,8 @@ import axios from "axios";
 import Header from "@/components/Header";
 import { FormValues } from "@/types/FormValues";
 
-type CustomerFormProps = {
-    onSubmit: (data: FormValues) => void;
-};
 
-const updateCard:React.FC<CustomerFormProps> = () => {
+const UpdateCard = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -148,4 +145,4 @@ const updateCard:React.FC<CustomerFormProps> = () => {
     )
 }
 
-export default updateCard
+export default UpdateCard

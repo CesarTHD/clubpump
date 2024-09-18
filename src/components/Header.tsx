@@ -11,8 +11,10 @@ const Header = () => {
 
 
     const logout = () => {
-        localStorage.removeItem("club.userId");
-        localStorage.removeItem("club.user");
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem("club.userId");
+            localStorage.removeItem("club.user");
+        }
         setUser(null);
         // router.push("/");
     }

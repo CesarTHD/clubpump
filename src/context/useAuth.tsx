@@ -8,9 +8,13 @@ export const useAuthContext = createContext({});
 export const AuthProvider = ({ children }: any) => {
     const router = useRouter();
     const [user, setUser]: any = useState(() => {
-        const localUser = localStorage.getItem('club.user');
-        if (localUser) {
-            return JSON.parse(localUser);
+        if (typeof window !== 'undefined') {
+            const localUser = localStorage.getItem('club.user');
+
+
+            if (localUser) {
+                return JSON.parse(localUser);
+            }
         }
     });
 
@@ -18,9 +22,9 @@ export const AuthProvider = ({ children }: any) => {
         if (!user) {
             router.push("/cliente");
         };
-        
+
     }, [user]);
-    
+
     return (
         <useAuthContext.Provider value={{ user, setUser }}>
             {children}

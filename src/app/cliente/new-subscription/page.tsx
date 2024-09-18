@@ -12,60 +12,49 @@ import loadingIcon from '@/assets/loading.png';
 import tokenizeCard from '@/functions/tokenizeCard';
 import axios from 'axios';
 
-type CustomerFormProps = {
-  onSubmit: (data: any) => void;
-};
 
-
-const CustomerForm: React.FC<CustomerFormProps> = () => {
+const CustomerForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { register, handleSubmit } = useForm<FormValues>();
   const searchParams = useSearchParams();
   const userId = searchParams?.get("userId");
 
-  const onSubmit = async (data: FormValues) => {
+  const handleFormSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     setError("");
     try {
       const cardToken = await axios.get(`/api/tokenizecard?dataCard=${JSON.stringify(data)}`, {
         headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
       });
+
       console.log(cardToken.data.card.id);
 
       try {
         const methodPay = await axios.get(`/api/newmethodpay?userId=${userId}&cardToken=${cardToken.data.card.id}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
-        })
+        });
+
         console.log(methodPay.data.id);
 
-        const subscription = await axios.get(`/api/newsubscription?userId=${userId}`, {
+        await axios.get(`/api/newsubscription?userId=${userId}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
-        })
-
-
-      }catch(err){
-        setLoading(false);
+        });
+      } catch (err) {
         setError("Erro ao emitir nova fatura.");
         console.log(err);
-      }finally{
-        setLoading(false);
       }
-      
     } catch (error) {
-      setLoading(false);
       setError("Erro ao emitir nova fatura.");
     } finally {
       setLoading(false);
     }
   };
 
-  console.log(error);
-
 
   return (
     <div>
-      <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(onSubmit)}>
+      <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(handleFormSubmit)}>
         <div className='flex flex-col w-full md:w-1/3'>
           <div className='border rounded-lg p-8'>
             <table className='w-full'>

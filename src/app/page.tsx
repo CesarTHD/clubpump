@@ -3,7 +3,11 @@ import Image from "next/image";
 import { useEffect } from "react";
 
 const Lp = () => {
-    let wscreen = window.innerWidth;
+    let wscreen = 1440;
+    
+    if (typeof window !== 'undefined') {
+        wscreen = window.innerWidth;
+    }
 
     return (
         <div>

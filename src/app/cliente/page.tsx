@@ -33,7 +33,9 @@ const Login = () => {
         headers: { accept: 'application/json', 'content-type': 'application/json' },
       });
 
-      localStorage.setItem("club.userId", response.data.token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("club.userId", response.data.token);
+      }
 
       try {
         const urlCustomer = `/api/customers?email=${data.email}`;
@@ -55,7 +57,9 @@ const Login = () => {
             uniqueCustomer = customer;
           }
         });
-        localStorage.setItem('club.user', JSON.stringify(uniqueCustomer));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('club.user', JSON.stringify(uniqueCustomer));
+        }
         setUser(uniqueCustomer);
         router.push('/cliente/home');
       } catch (error) {
