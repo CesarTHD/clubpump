@@ -16,6 +16,8 @@ const CustomerForm = () => {
   const [error, setError] = useState("");
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const userId = searchParams?.get("userId");
 
@@ -39,9 +41,11 @@ const CustomerForm = () => {
         await axios.get(`/api/newsubscription?userId=${userId}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
+
+        router.push("/home");
       } catch (err) {
         setError("Erro ao emitir nova fatura.");
-        console.log(err);
+        router.push("/home");
       }
     } catch (error) {
       setError("Erro ao emitir nova fatura.");

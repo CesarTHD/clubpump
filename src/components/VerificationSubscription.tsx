@@ -6,11 +6,10 @@ import { getSubscriptions } from "@/functions/getSubscriptions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const VerificationSubscription = (email: any) => {
+const VerificationSubscription = ({email, setConsultant, subscriptions, setSubscriptions}:any ) => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [subscriptions, setSubscriptions]: any = useState([]);
     const [newSubscription, setNewSubscription] = useState(false);
     const [subscriptionOk, setSubscriptionOk] = useState(false);
     const [option, setOption] = useState(0);
@@ -20,11 +19,9 @@ const VerificationSubscription = (email: any) => {
     const router = useRouter();
 
     const activeSubscriptions: any = [];
-
     async function get() {
         try {
             const response = await getSubscriptions(email);
-            console.log(response)
             setSubscriptions(response);
         } catch (error: any) {
             setError(error);
@@ -51,7 +48,6 @@ const VerificationSubscription = (email: any) => {
                 })
             }
         })
-        console.log(subscriptions);
         return {
             suspended: countSuspended === subscriptions.length,
             arrays: {
@@ -65,14 +61,12 @@ const VerificationSubscription = (email: any) => {
         if (subscriptions.length === 0) get();
     }, []);
 
-    // console.log(activeSubscriptions);
     useEffect(() => {
         const checkActive = async () => {
             if (!subscriptions || subscriptions.length === 0) return; // Verifica se subscriptions existe e se não está vazio
 
             const { suspended, arrays } = await checkSuspended(subscriptions);
             setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-            console.log(arrays);
 
             if (suspended) {
                 setOption(2); // Condição suspensa, não precisa continuar
@@ -120,17 +114,11 @@ const VerificationSubscription = (email: any) => {
             } else {
                 setOption(3); // arrays.includedsPaid.length === 0
             }
+            
         };
 
         checkActive();
     }, [subscriptions]);
-
-
-
-
-
-
-    // console.log(subscriptions);
 
     return (
         <div className="text-center">
@@ -155,34 +143,38 @@ const VerificationSubscription = (email: any) => {
                                 }
                                 {
                                     option === 2 && (
-                                        <p className="text-base">
-                                            Você não possui assinatura ativa.
-                                            <button onClick={() => router.push(`/cliente/new-subscription?userId=${subscriptions[0].customer_id}`)}
+                                        <div className="">
+                                            <p className="text-base block md:inline">Você não possui assinatura ativa.{" "}</p>
+                                            <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
                                                 className="text-blue-400 hover:underline"
                                             >
-                                                Criar uma nova assinatura.
+                                                <span className="text-base">Criar uma nova assinatura.</span>
                                             </button>
-                                        </p>
+                                        </div>
                                     )
                                 }
                                 {
                                     option === 3 && (
-                                        <p className="text-base">
-                                            Erro ao pagar fatura.
-                                            <button onClick={() => router.push(`/cliente/update-card?invoiceId=${invoice}`)}
+                                        <div>
+                                            <p className="text-base  block md:inline">Erro ao pagar fatura.{" "}</p>
+                                            <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
                                                 className="text-blue-400 hover:underline"
                                             >
-                                                Atualize seu método de pagamento.
+                                                <span className="text-base">Atualize seu método de pagamento.</span>
                                             </button>
-
-                                        </p>
+                                        </div>
                                     )
                                 }
                                 {
                                     option === 4 && (
-                                        <p className="text-base">
-                                            Erro com cartão de crédito. Atualize o método de pagamento.
-                                        </p>
+                                        <div>
+                                            <p className="text-base  block md:inline">Erro com cartão de crédito.{" "}</p>
+                                            <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
+                                                className="text-blue-400 hover:underline"
+                                            >
+                                                <span className="text-base">Atualize seu método de pagamento.</span>
+                                            </button>
+                                        </div>
                                     )
                                 }
                             </TableCell>

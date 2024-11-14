@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: any) => {
 
     useEffect(() => {
         if (!user) {
-            router.push("/cliente");
+            router.push("/");
         };
 
     }, [user]);

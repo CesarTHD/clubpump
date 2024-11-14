@@ -17,6 +17,7 @@ import { FormValues } from "@/types/FormValues";
 const UpdateCard = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [cardDisplay, setCardDisplay] = useState("");
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -24,9 +25,10 @@ const UpdateCard = () => {
     const userId = searchParams?.get("userId");
     const invoiceId = searchParams?.get("invoiceId");
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+    const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
     const onSubmit = async (data: FormValues) => {
+        console.log(data)
         setLoading(true);
         setError("");
         try {
@@ -39,17 +41,19 @@ const UpdateCard = () => {
                 const methodPay = await axios.get(`/api/newmethodpay?userId=${userId}&cardToken=${cardToken.data.card.id}`, {
                     headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
                 })
-                console.log(methodPay.data.id);
+                // console.log(methodPay.data.id);
 
                 const invoice = await axios.get(`/api/newinvoice?invoiceId=${invoiceId}`, {
                     headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
                 })
 
+                router.push("/home")
+
 
             } catch (err) {
                 setLoading(false);
                 setError("Erro ao efetuar cadastro.");
-                console.log(err);
+                router.push("/home");
             } finally {
                 setLoading(false);
             }
@@ -62,34 +66,22 @@ const UpdateCard = () => {
         }
     };
 
+    const handleCardInputChange = (e:any) => {
+        const rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+        // Limita a entrada a no máximo 16 dígitos sem espaços
+        if (rawValue.length > 16) return;
+
+        const formattedValue = rawValue.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaços a cada 4 dígitos
+        setCardDisplay(formattedValue); // Atualiza a exibição formatada do input
+
+        // Atualiza o valor sem formatação diretamente no estado do formulário
+        setValue('number', rawValue, { shouldValidate: true });
+    };
+
     return (
         <div className="pt-16 bg-white text-black">
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-[500px] mx-auto">
-                <div className='border rounded-lg p-8'>
-                    <table className='w-full'>
-                        <thead className='font-semibold text-lg'>
-                            <tr>
-                                <td className='w-[70%]'>
-                                    <p>Produto</p>
-                                </td>
-                                <td>
-                                    <p>Subtotal</p>
-                                </td>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td className='w-[70%]'>
-                                    <p>Assinatura Club Pump Cashback - Assine x6</p>
-                                </td>
-                                <td>
-                                    <p>R$ 19,95 / mês</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
                 <div className='border rounded-lg p-8 mt-8'>
                     <Fieldset>
                         <Legend><p className='text-xl '>Informações de pagamento</p></Legend>
@@ -97,12 +89,21 @@ const UpdateCard = () => {
                         <div className='mt-4'>
                             <Field>
                                 <Label><p className=''>Número do cartão de crédito:</p></Label>
-                                <Input {...register('number', {
-                                    required: "Número do cartão é obrigatório",
-                                    minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                                    maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                                    pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
-                                })} type='text' placeholder='0000 0000 0000 0000' />
+                                <Input
+                                    type="text"
+                                    placeholder="0000 0000 0000 0000"
+                                    value={cardDisplay} // Exibe o valor formatado
+                                    onChange={handleCardInputChange}
+                                />
+                                <Input
+                                    {...register('number', {
+                                        required: "Número do cartão é obrigatório",
+                                        minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                                        maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
+                                        pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                                    })}
+                                    type="hidden" // Mantém o valor "puro" oculto para validação e envio
+                                />
                                 {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
                             </Field>
                         </div>
@@ -134,13 +135,13 @@ const UpdateCard = () => {
                             </Field>
                         </div>
                         <p className='mt-6 text-xs leading-4'>
-                            Ao clicar no botão “Assine agora” abaixo,
+                            Ao clicar no botão “Atualizar cartão” abaixo,
                             você concorda com nosso <a className='text-blue-400' href="#" target='_blank'>TERMO DE USO</a> e aceita que a Pump
                             renove automaticamente sua assinatura e cobre o
                             preço da assinatura (atualmente R$19,95/mês).
                         </p>
                         <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
-                            ASSINE AGORA!
+                            ATUALIZAR CARTÃO
                         </button>
                     </Fieldset>
                 </div>
