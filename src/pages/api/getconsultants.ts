@@ -5,18 +5,19 @@ import { headers } from 'next/headers';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users?capabilities=administrador`;
+    // const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users?username=pedro.mota&email=Pedromota@c2holding.com.br&password=QQ&P@q#i5a)LWFuaGUX0*EPH`;
     const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users`;
     // const urlApi = `https://clubpump.com.br/wp-json/custom/v1/users?role=colaborador`;
 
     // Token JWT gerado anteriormente
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NsdWJwdW1wLmNvbS5iciIsImlhdCI6MTczMTc2NzExMCwibmJmIjoxNzMxNzY3MTEwLCJleHAiOjE3MzIzNzE5MTAsImRhdGEiOnsidXNlciI6eyJpZCI6IjIxIn19fQ.zlvsLpSglJu_58JXI0ULYuO4Mg4BjCeUKw_3GvGIXFA';
+    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NsdWJwdW1wLmNvbS5iciIsImlhdCI6MTczMTc4MTkzMSwibmJmIjoxNzMxNzgxOTMxLCJleHAiOjE3MzIzODY3MzEsImRhdGEiOnsidXNlciI6eyJpZCI6IjIxIn19fQ.I4-FcNoVFdAY1pxkWxEK4Q40VydzGnh69y9NBKdmeuQ';
 
     // Faz a requisição para o endpoint
-    const response = await axios.post(urlApi, {
+    const response = await axios.get(urlApi, {
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": 'application/json',
+        'Authorization': `${token}`,
       }
     });
 
