@@ -14,7 +14,7 @@ type CustomerFormProps = {
     onSubmit: (data: any) => void;
 };
 
-const Signup: React.FC<CustomerFormProps> = ({ onSubmit }: any) => {
+const Signup: React.FC<CustomerFormProps> = ({ onSubmit }) => {
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
