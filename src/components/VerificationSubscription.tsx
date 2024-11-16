@@ -25,6 +25,7 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
             setSubscriptions(response);
         } catch (error: any) {
             setError(error);
+            router.push("/");
         } finally {
             setLoading(false);
         }

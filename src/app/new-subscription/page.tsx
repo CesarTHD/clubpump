@@ -15,6 +15,8 @@ const CustomerForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const [cardDisplay, setCardDisplay] = useState("");
+  const [expirationDisplay, setExpirationDisplay] = useState("");
 
   const router = useRouter();
 
@@ -52,6 +54,31 @@ const CustomerForm = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+    // Limita a entrada a no máximo 16 dígitos sem espaços
+    if (rawValue.length > 16) return;
+
+    // Formata o valor com espaços a cada 4 dígitos
+    const formattedValue = rawValue.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaços a cada 4 dígitos
+    setCardDisplay(formattedValue); // Atualiza a exibição formatada do input
+  };
+
+  const handleExpirationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+    // Limita a entrada a no máximo 6 dígitos (MMYYYY)
+    if (rawValue.length > 6) return;
+
+    // Adiciona a barra automaticamente após o mês (primeiros 2 dígitos)
+    if (rawValue.length >= 3) {
+      rawValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2)}`;
+    }
+
+    setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
   };
 
   return (
@@ -92,14 +119,16 @@ const CustomerForm = () => {
                 <Field>
                   <Label><span className=''>Número do cartão de crédito:</span></Label>
                   <Input
+                    type="text"
+                    placeholder="0000 0000 0000 0000"
                     {...register('number', {
                       required: "Número do cartão é obrigatório",
-                      minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                      maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                      pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                      minLength: { value: 19, message: "O cartão deve ter 16 dígitos" },
+                      maxLength: { value: 19, message: "O cartão deve ter 16 dígitos" },
+                      pattern: { value: /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/, message: "Formato inválido" }
                     })}
-                    type='text'
-                    placeholder='0000 0000 0000 0000'
+                    value={cardDisplay} // Exibe o valor formatado
+                    onChange={handleCardInputChange}
                   />
                   {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
                 </Field>
@@ -120,24 +149,23 @@ const CustomerForm = () => {
                   <Input
                     {...register('expiration', {
                       required: "Data de vencimento é obrigatória",
-                      pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{2})$/, message: "Formato inválido (MM/AA)" }
+                      pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{4})$/, message: "Formato inválido (MM/AAAA)" }
                     })}
-                    type='text'
-                    placeholder='MM/AA'
+                    type="text"
+                    placeholder="MM/AAAA"
+                    value={expirationDisplay} // Exibe o valor formatado
+                    onChange={handleExpirationInputChange}
                   />
                   {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
                 </Field>
                 <Field className='w-full'>
                   <Label><span className=''>Código de segurança:</span></Label>
-                  <Input
-                    {...register('cvv', {
-                      required: "CVV é obrigatório",
-                      minLength: { value: 3, message: "CVV deve ter no mínimo 3 dígitos" },
-                      maxLength: { value: 4, message: "CVV deve ter no máximo 4 dígitos" },
-                      pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
-                    })}
-                    type='current-password'
-                  />
+                  <Input {...register('cvv', {
+                    required: "CVV é obrigatório",
+                    minLength: { value: 3, message: "CVV deve ter no mínimo 3 dígitos" },
+                    maxLength: { value: 4, message: "CVV deve ter no máximo 4 dígitos" },
+                    pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
+                  })} type='current-password' />
                   {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
                 </Field>
               </div>

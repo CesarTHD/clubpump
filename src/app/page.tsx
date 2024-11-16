@@ -36,6 +36,8 @@ const Login = () => {
         headers: { accept: 'application/json', 'content-type': 'application/json' },
       });
 
+      console.log(response.data.token);
+
       if (typeof window !== 'undefined') {
         localStorage.setItem("club.userId", response.data.token);
       }

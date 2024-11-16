@@ -1,16 +1,13 @@
 'use client';
-import { useAuthContext } from "@/context/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Field, FieldGroup, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
-import { Button } from '@/components/catalyst-ui-kit/button';
 import Image from 'next/image';
 import loadingIcon from '@/assets/loading.png';
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import Header from "@/components/Header";
 import { FormValues } from "@/types/FormValues";
 
 
@@ -18,6 +15,8 @@ const UpdateCard = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [cardDisplay, setCardDisplay] = useState("");
+    const [expirationDisplay, setExpirationDisplay] = useState("");
+
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -52,7 +51,7 @@ const UpdateCard = () => {
 
             } catch (err) {
                 setLoading(false);
-                setError("Erro ao efetuar cadastro.");
+                setError("Erro ao atualizar método de pagamento, verifique os dados do cartão de crédito.");
                 router.push("/home");
             } finally {
                 setLoading(false);
@@ -60,24 +59,37 @@ const UpdateCard = () => {
 
         } catch (error) {
             setLoading(false);
-            setError("Erro ao efetuar cadastro.");
+            setError("Erro ao atualizar método de pagamento, verifique os dados do cartão de crédito.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleCardInputChange = (e:any) => {
+    const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
 
         // Limita a entrada a no máximo 16 dígitos sem espaços
         if (rawValue.length > 16) return;
 
+        // Formata o valor com espaços a cada 4 dígitos
         const formattedValue = rawValue.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaços a cada 4 dígitos
         setCardDisplay(formattedValue); // Atualiza a exibição formatada do input
-
-        // Atualiza o valor sem formatação diretamente no estado do formulário
-        setValue('number', rawValue, { shouldValidate: true });
     };
+
+    const handleExpirationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+        // Limita a entrada a no máximo 6 dígitos (MMYYYY)
+        if (rawValue.length > 6) return;
+
+        // Adiciona a barra automaticamente após o mês (primeiros 2 dígitos)
+        if (rawValue.length >= 3) {
+            rawValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2)}`;
+        }
+
+        setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
+    };
+
 
     return (
         <div className="pt-16 bg-white text-black">
@@ -92,18 +104,16 @@ const UpdateCard = () => {
                                 <Input
                                     type="text"
                                     placeholder="0000 0000 0000 0000"
+                                    {...register('number', {
+                                        required: "Número do cartão é obrigatório",
+                                        minLength: { value: 19, message: "O cartão deve ter 16 dígitos" },
+                                        maxLength: { value: 19, message: "O cartão deve ter 16 dígitos" },
+                                        pattern: { value: /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/, message: "Formato inválido" }
+                                    })}
                                     value={cardDisplay} // Exibe o valor formatado
                                     onChange={handleCardInputChange}
                                 />
-                                <Input
-                                    {...register('number', {
-                                        required: "Número do cartão é obrigatório",
-                                        minLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                                        maxLength: { value: 16, message: "O cartão deve ter 16 dígitos" },
-                                        pattern: { value: /^[0-9]+$/, message: "Somente números são permitidos" }
-                                    })}
-                                    type="hidden" // Mantém o valor "puro" oculto para validação e envio
-                                />
+
                                 {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
                             </Field>
                         </div>
@@ -117,10 +127,16 @@ const UpdateCard = () => {
                         <div className='mt-4 flex gap-4'>
                             <Field className='w-full'>
                                 <Label><p className=''>Data de vencimento:</p></Label>
-                                <Input {...register('expiration', {
-                                    required: "Data de vencimento é obrigatória",
-                                    pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{2})$/, message: "Formato inválido (MM/AA)" }
-                                })} type='text' placeholder='MM/AAAA' />
+                                <Input
+                                    {...register('expiration', {
+                                        required: "Data de vencimento é obrigatória",
+                                        pattern: { value: /^(0[1-9]|1[0-2])\/?([0-9]{4})$/, message: "Formato inválido (MM/AAAA)" }
+                                    })}
+                                    type="text"
+                                    placeholder="MM/AAAA"
+                                    value={expirationDisplay} // Exibe o valor formatado
+                                    onChange={handleExpirationInputChange}
+                                />
                                 {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
                             </Field>
                             <Field className='w-full'>
@@ -143,6 +159,7 @@ const UpdateCard = () => {
                         <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
                             ATUALIZAR CARTÃO
                         </button>
+                        {error && <p className="text-sm text-red-600 mt-4">* {error}</p>}
                     </Fieldset>
                 </div>
             </form>

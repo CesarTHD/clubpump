@@ -1,12 +1,13 @@
 "use client";
 import Image from "next/image";
 import pump from '../../public/assets/pump-small.png'
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState, useEffect } from "react";
 import { useAuthContext } from "@/context/useAuth";
 
 const Header = () => {
     const router = useRouter();
+    const path = usePathname();
     const { user, setUser }: any = useContext(useAuthContext);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -17,12 +18,11 @@ const Header = () => {
             localStorage.removeItem("club.user");
         }
         setUser(null);
-        // router.push("/");
     }
 
     useEffect(() => {
         setIsMounted(true);
-    }, [])
+    }, []);
 
     return (
         <header className="md:max-w-[80rem] mx-auto">
@@ -34,8 +34,13 @@ const Header = () => {
                             <h1 className="text-xl">Portal do cliente</h1>
                         </td>
                         <td>
-                            <button
-                                onClick={() => router.push("/home")}
+                            <button onClick={() => {
+                                        if (path !== "/checkout") {
+                                            router.push("/home")
+                                        } else {
+                                            router.push("/");
+                                        }
+                                    }}
                             // disabled={!user?.email}
                             >
                                 <Image src={"https://clubpump.com.br/wp-content/uploads/2023/08/FUNDO-ESCURO.png"} alt="Logo Club Pump" width={200} height={100} />
