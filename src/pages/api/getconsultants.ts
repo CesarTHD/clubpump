@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // const urlApi = `https://clubpump.com.br/wp-json/custom/v1/users?role=colaborador`;
 
     // Token JWT gerado anteriormente
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NsdWJwdW1wLmNvbS5iciIsImlhdCI6MTczMTc2NzExMCwibmJmIjoxNzMxNzY3MTEwLCJleHAiOjE3MzIzNzE5MTAsImRhdGEiOnsidXNlciI6eyJpZCI6IjIxIn19fQ.zlvsLpSglJu_58JXI0ULYuO4Mg4BjCeUKw_3GvGIXFA';
+    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NsdWJwdW1wLmNvbS5iciIsImlhdCI6MTczMTc2ODg4NSwibmJmIjoxNzMxNzY4ODg1LCJleHAiOjE3MzIzNzM2ODUsImRhdGEiOnsidXNlciI6eyJpZCI6IjIxIn19fQ.yZMysOAcQrSScST490ELFoo9OajVWWnb_eEC3UlZZMo';
 
     // Faz a requisição para o endpoint
     const response = await axios.post(urlApi, {
