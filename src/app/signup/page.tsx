@@ -10,11 +10,8 @@ import loadingIcon from '@/assets/loading.png';
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-type CustomerFormProps = {
-    onSubmit: (data: any) => void;
-};
 
-const Signup: React.FC<CustomerFormProps> = ({ onSubmit }) => {
+const Signup = ({ onSubmit }: any) => {
     const [loading, setLoading] = useState(false);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
