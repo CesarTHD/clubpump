@@ -2,21 +2,19 @@
 import { FormValues } from '@/types/FormValues';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Field, FieldGroup, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
+import { Field, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
-import { Button } from '@/components/catalyst-ui-kit/button';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
-import loadingIcon from '@/assets/loading.png';
 import axios from 'axios';
 
-const CustomerForm = () => {
+const NewSubscription = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [cardDisplay, setCardDisplay] = useState("");
   const [expirationDisplay, setExpirationDisplay] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const router = useRouter();
 
@@ -38,13 +36,11 @@ const CustomerForm = () => {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
-        console.log(methodPay.data.id);
-
         await axios.get(`/api/newsubscription?userId=${userId}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
-
-        router.push("/home");
+        setSuccess(true);
+        router.push("/");
       } catch (err) {
         setError("Erro ao emitir nova fatura.");
         router.push("/home");
@@ -83,6 +79,11 @@ const CustomerForm = () => {
 
   return (
     <div>
+      {success && (
+        <div className='bg-black bg-opacity-80 flex text-center justify-center items-center absolute top-0 w-full h-[100vh] z-50'>
+          <h1 className='text-3xl font-bold'>Assinatura efetivada com sucesso! Aproveite nossos benefícios.</h1>
+        </div>
+      )}
       <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(handleFormSubmit)}>
         <div className='flex flex-col w-full md:w-1/3'>
           <div className='border rounded-lg p-8'>
@@ -200,4 +201,4 @@ const CustomerForm = () => {
   );
 };
 
-export default CustomerForm;
+export default NewSubscription;

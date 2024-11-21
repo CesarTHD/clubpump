@@ -123,21 +123,21 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
 
     return (
         <div className="text-center">
-            <div className={subscriptionOk ? "border border-green-400 mx-auto mt-10 max-w-fit px-10 rounded-xl" : "border border-red-500 mx-auto mt-10 max-w-fit px-10 rounded-xl"}>
+            <div className={subscriptionOk ? "border border-green-400 md:mx-auto mt-10 max-w-fit mx-4 px-10 rounded-xl" : "border border-red-500 mx-auto mt-10 max-w-fit px-10 rounded-xl"}>
                 <Table className="w-full">
                     <TableBody>
                         <TableRow className="text-zinc-300">
                             <TableCell className="">
                                 {
                                     option === 0 && (
-                                        <p className="text-base">
+                                        <p className="whitespace-normal text-lg">
                                             Loading...
                                         </p>
                                     )
                                 }
                                 {
                                     option === 1 && (
-                                        <p className="text-base">
+                                        <p className="whitespace-normal text-lg">
                                             Sua assinatura está em dias. Aproveite nossos benefícios!
                                         </p>
                                     )
@@ -145,11 +145,11 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                                 {
                                     option === 2 && (
                                         <div className="">
-                                            <p className="text-base block md:inline">Você não possui assinatura ativa.{" "}</p>
+                                            <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
                                             <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
                                                 className="text-blue-400 hover:underline"
                                             >
-                                                <span className="text-base">Criar uma nova assinatura.</span>
+                                                <span className="text-lg">Criar uma nova assinatura.</span>
                                             </button>
                                         </div>
                                     )
@@ -157,11 +157,11 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                                 {
                                     option === 3 && (
                                         <div>
-                                            <p className="text-base  block md:inline">Erro ao pagar fatura.{" "}</p>
+                                            <p className="whitespace-normal text-lg  block md:inline">Erro ao pagar fatura.{" "}</p>
                                             <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
                                                 className="text-blue-400 hover:underline"
                                             >
-                                                <span className="text-base">Atualize seu método de pagamento.</span>
+                                                <span className="text-lg">Atualize seu método de pagamento.</span>
                                             </button>
                                         </div>
                                     )
@@ -169,11 +169,11 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                                 {
                                     option === 4 && (
                                         <div>
-                                            <p className="text-base  block md:inline">Erro com cartão de crédito.{" "}</p>
+                                            <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
                                             <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
                                                 className="text-blue-400 hover:underline"
                                             >
-                                                <span className="text-base">Atualize seu método de pagamento.</span>
+                                                <span className="text-lg">Atualize seu método de pagamento.</span>
                                             </button>
                                         </div>
                                     )

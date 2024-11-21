@@ -42,9 +42,11 @@ const UpdateCard = () => {
                 })
                 // console.log(methodPay.data.id);
 
-                const invoice = await axios.get(`/api/newinvoice?invoiceId=${invoiceId}`, {
-                    headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
-                })
+                if(invoiceId){
+                    const invoice = await axios.get(`/api/newinvoice?invoiceId=${invoiceId}`, {
+                        headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
+                    });
+                }
 
                 router.push("/home")
 

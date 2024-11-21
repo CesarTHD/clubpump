@@ -1,5 +1,6 @@
 export type User = {
-    name: string,
+    first_name: string,
+    last_name: string,
     cpf_cnpj: string,
     phone_prefix: number,
     phone: number,

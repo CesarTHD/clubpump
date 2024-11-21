@@ -21,17 +21,16 @@ export const AuthProvider = ({ children }: any) => {
     });
 
     useEffect(() => {
-        if (!user && path !== '/checkout' && path !== '/signup') {
+        if (!user && path !== '/checkout') {
             router.push("/");
         };
 
     }, [user]);
 
     useEffect(() => {
-        if (!user && path !== '/checkout' && path !== '/signup') {
+        if (!user && path !== '/checkout') {
             router.push("/");
         };
-
     });
 
     return (

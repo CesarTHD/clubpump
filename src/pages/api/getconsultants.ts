@@ -4,34 +4,26 @@ import { headers } from 'next/headers';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users?capabilities=administrador`;
-    // const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users?username=pedro.mota&email=Pedromota@c2holding.com.br&password=QQ&P@q#i5a)LWFuaGUX0*EPH`;
-    const urlApi = `https://clubpump.com.br/wp-json/wp/v2/users`;
-    // const urlApi = `https://clubpump.com.br/wp-json/custom/v1/users?role=colaborador`;
-
-    // Token JWT gerado anteriormente
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NsdWJwdW1wLmNvbS5iciIsImlhdCI6MTczMTc4MTkzMSwibmJmIjoxNzMxNzgxOTMxLCJleHAiOjE3MzIzODY3MzEsImRhdGEiOnsidXNlciI6eyJpZCI6IjIxIn19fQ.I4-FcNoVFdAY1pxkWxEK4Q40VydzGnh69y9NBKdmeuQ';
-
-    // Faz a requisição para o endpoint
+    const urlApi = `https://clubpump.com.br/wp-json/wp/v2/posts/7790`;
+  
     const response = await axios.get(urlApi, {
       headers: {
         'Accept': 'application/json',
         "Content-Type": 'application/json',
-        'Authorization': `${token}`,
+        // 'Authorization': `Bearer ${token}`,
       }
     });
 
-    // Verifica se a resposta contém usuários
-    const users = response.data; // WordPress retorna um array diretamente
-    if (Array.isArray(users) && users.length > 0) {
-      res.status(200).json(users); // Retorna a lista de usuários
+    const post = response.data; // WordPress retorna um array diretamente
+    if (post) {
+      res.status(200).json(post); // Retorna a lista de usuários
     } else {
-      res.status(404).json({ error: 'Nenhum usuário encontrado.' });
+      res.status(404).json({ error: 'Post não encontrado.' });
     }
   } catch (error: any) {
-    console.error('Erro ao buscar usuários:', error.response?.data || error.message);
+    console.error('Erro ao buscar post:', error.response?.data || error.message);
     res.status(500).json({
-      error: 'Erro ao buscar clientes',
+      error: 'Erro ao buscar post',
       details: error.response?.data || error.message,
     });
   }

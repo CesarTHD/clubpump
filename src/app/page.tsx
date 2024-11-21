@@ -28,50 +28,44 @@ const Login = () => {
 
     setError('');
     try {
-      const urlToken = `/api/authtoken`;
-      const response = await axios.post(urlToken, {
-        email: data.email,
-        password: data.password
-      },{
-        headers: { accept: 'application/json', 'content-type': 'application/json' },
+      const urlCustomer = `/api/customers`;
+      const response = await axios.post(urlCustomer, {
+        email: data.email
+      }, {
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       });
 
-      console.log(response.data.token);
+      const customers = await response.data;
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem("club.userId", response.data.token);
-      }
+      let uniqueCustomer: any = {};
+      customers.items.map((customer: any, index: number) => {
+        if (customer.cpf_cnpj) {
+          uniqueCustomer = customer;
+        } else if (index === customers.items.length - 1 && !customer.cpf_cnpj) {
+          uniqueCustomer = customer;
+        }
+      });
 
-      try {
-        const urlCustomer = `/api/customers`;
-        const response = await axios.post(urlCustomer, {
-          email: data.email
-        },{
-          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-        });
 
-        const customers = await response.data;
-
-        let uniqueCustomer;
-
-        customers.items.map((customer: any, index: number) => {
-          if (customer.cpf_cnpj) {
-            uniqueCustomer = customer;
-          } else if (index === customers.items.length - 1 && !customer.cpf_cnpj) {
-            uniqueCustomer = customer;
-          }
-        });
+      if (uniqueCustomer.cpf_cnpj) {
+        if (uniqueCustomer.cpf_cnpj === data.password && typeof window !== 'undefined') {
+          localStorage.setItem('club.user', JSON.stringify(uniqueCustomer));
+          setUser(uniqueCustomer);
+          router.push('/home');
+        } else {
+          setError("Erro ao efetuar login. Verifique suas credenciais ou tente novamente mais tarde.  ")
+        }
+      } else {
         if (typeof window !== 'undefined') {
           localStorage.setItem('club.user', JSON.stringify(uniqueCustomer));
+          setUser(uniqueCustomer);
+          router.push('/home');
         }
-        setUser(uniqueCustomer);
-        router.push('/home');
-      } catch (error) {
-        return;
       }
-
-    } catch (err: any) {
-      setError(err.response.data.error);
+      
+    } catch (error) {
+      setError("Erro ao efetuar login. Verifique suas credenciais ou tente novamente mais tarde.  ")
+      return error;
     } finally {
       setLoading(false);
     }
@@ -82,16 +76,17 @@ const Login = () => {
       <div className='flex flex-col max-w-[400px] mx-auto mt-20 gap-8 justify-center px-4'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Fieldset>
-            <Legend><span className='text-white text-lg'>Login</span></Legend>
-            <Text>Faça login para visualizar suas faturas ou contratar um novo plano.</Text>
+            <Legend><span className='text-white text-xl'>Login</span></Legend>
+            <Text><span className='text-base'>Faça login para verificar sua assinatura ou contratar um novo plano.</span></Text>
             <FieldGroup>
               <Field>
-                <Label><span className='text-white'>E-mail:</span></Label>
+                <Label><span className='text-white text-base'>E-mail:</span></Label>
                 <Input {...register('email')} type='text' />
               </Field>
               <Field>
-                <Label><span className='text-white'>Senha:</span></Label>
+                <Label><span className='text-white text-base'>Senha:</span></Label>
                 <Input {...register('password')} type='password' />
+                {error && (<div className='text-red-500 text-sm font-light mt-2' dangerouslySetInnerHTML={{ __html: error }} />)}
               </Field>
               <Button type='submit' disabled={loading === true} className='hover:cursor-pointer min-w-32'>
                 {!loading ? (
@@ -110,7 +105,6 @@ const Login = () => {
           </Fieldset>
         </form>
 
-        {error && (<div dangerouslySetInnerHTML={{ __html: error }} />)}
       </div>
     </div>
   );

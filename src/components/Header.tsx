@@ -31,7 +31,7 @@ const Header = () => {
                 <tbody>
                     <tr className="flex flex-col md:flex-row items-center justify-between">
                         <td>
-                            <h1 className="text-xl">Portal do cliente</h1>
+                            <h1 className="text-xl">Área do cliente</h1>
                         </td>
                         <td>
                             <button onClick={() => {

@@ -14,15 +14,22 @@ const Home = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [consultant, setConsultant] = useState("");
     const [subscriptions, setSubscriptions]: any = useState([]);
-
+    
     useEffect(() => {
         setIsMounted(true);
     }, []);
+    
+    let firstName = "", lastName = "";
+    const name = user?.name.split(" ");
+    if(name) {
+        firstName = name[0];
+        lastName = name[1];
+    }
 
     return (
         <div>
             <div className="md:max-w-[80rem] mx-auto">
-                {isMounted && <h1 className="text-center  mt-16 text-4xl font-semibold">Olá, {user?.name}.</h1>}
+                {<h1 className="text-center  mt-16 text-4xl font-semibold">Olá, {firstName}{lastName && ` ${lastName}`}.</h1>}
                 {subscriptions[0]?.custom_variables[0]?.name && (
                     <div className="">
                         <p className="text-center text-lg">Consultor: <span>{subscriptions[0].custom_variables[0].name}</span></p>
