@@ -8,7 +8,7 @@ import CardForm from '@/components/CardForm';
 import Success from '@/components/Success';
 
 const Checkout = () => {
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(1);
     const [userId, setUserId] = useState("");
     const [consultants, setConsultants] = useState("");
 
