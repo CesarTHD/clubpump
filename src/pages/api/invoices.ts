@@ -5,13 +5,13 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { cpf } = req.query;
-
+  const API_TOKEN = process.env.SECRET_API_KEY;
   if (!cpf) {
     return res.status(500).json({ error: 'cpf é obrigatório' });
   }
 
   try {
-    const urlApi = `https://api.iugu.com/v1/invoices?query=payer_cpf_cnpj%3A${cpf}&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+    const urlApi = `${process.env.NEXT_PUBLIC_API_URL}/invoices?query=payer_cpf_cnpj%3A${cpf}&api_token=${API_TOKEN}`;
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },
     });

@@ -1,6 +1,6 @@
 'use client';
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Field, FieldGroup, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
@@ -16,6 +16,7 @@ const UpdateCard = () => {
     const [error, setError] = useState("");
     const [cardDisplay, setCardDisplay] = useState("");
     const [expirationDisplay, setExpirationDisplay] = useState("");
+    const [success, setSuccess] = useState(false);
 
 
     const searchParams = useSearchParams();
@@ -27,34 +28,31 @@ const UpdateCard = () => {
     const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormValues>();
 
     const onSubmit = async (data: FormValues) => {
-        console.log(data)
         setLoading(true);
         setError("");
         try {
             const cardToken = await axios.get(`/api/tokenizecard?dataCard=${JSON.stringify(data)}`, {
                 headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
             });
-            console.log(cardToken.data.card.id);
 
             try {
+                let invoice;
                 const methodPay = await axios.get(`/api/newmethodpay?userId=${userId}&cardToken=${cardToken.data.card.id}`, {
                     headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
                 })
-                // console.log(methodPay.data.id);
 
-                if(invoiceId){
-                    const invoice = await axios.get(`/api/newinvoice?invoiceId=${invoiceId}`, {
+                if (invoiceId) {
+                    invoice = await axios.get(`/api/newinvoice?invoiceId=${invoiceId}`, {
                         headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
                     });
                 }
 
-                router.push("/home")
+                console.log("aa", invoice);
 
-
+                setSuccess(true);
             } catch (err) {
                 setLoading(false);
                 setError("Erro ao atualizar método de pagamento, verifique os dados do cartão de crédito.");
-                router.push("/home");
             } finally {
                 setLoading(false);
             }
@@ -92,9 +90,22 @@ const UpdateCard = () => {
         setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
     };
 
+    useEffect(() => {
+        if (success) {
+            setTimeout(() => {
+                router.push("/home");
+            }, 5000);
+        }
+    }, [success]);
+
 
     return (
         <div className="pt-16 bg-white text-black">
+            {success && (
+                <div className='bg-black text-white bg-opacity-80 flex text-center justify-center items-center absolute top-0 w-full h-[100vh] z-50'>
+                    <h1 className='text-3xl font-bold'>Assinatura efetivada com sucesso! Aproveite nossos benefícios.</h1>
+                </div>
+            )}
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-[500px] mx-auto">
                 <div className='border rounded-lg p-8 mt-8'>
                     <Fieldset>
@@ -158,9 +169,23 @@ const UpdateCard = () => {
                             renove automaticamente sua assinatura e cobre o
                             preço da assinatura (atualmente R$19,95/mês).
                         </p>
-                        <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
-                            ATUALIZAR CARTÃO
-                        </button>
+                        {!loading ? (
+                            <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
+                                ATUALIZAR CARTÃO
+                            </button>
+                        ) : (
+                            <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
+                                <div className='flex justify-center'>
+                                    <Image
+                                        src={loadingIcon}
+                                        width={25}
+                                        height={25}
+                                        style={{ animation: 'rotate .7s linear infinite' }}
+                                        alt="Loading"
+                                    />
+                                </div>
+                            </button>
+                        )}
                         {error && <p className="text-sm text-red-600 mt-4">* {error}</p>}
                     </Fieldset>
                 </div>

@@ -1,12 +1,14 @@
 'use client';
 import { FormValues } from '@/types/FormValues';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Field, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import loadingIcon from '@/assets/loading.png';
+import Image from 'next/image';
 
 const NewSubscription = () => {
   const [loading, setLoading] = useState(false);
@@ -29,8 +31,6 @@ const NewSubscription = () => {
         headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
       });
 
-      console.log(cardToken.data.card.id);
-
       try {
         const methodPay = await axios.get(`/api/newmethodpay?userId=${userId}&cardToken=${cardToken.data.card.id}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
@@ -39,8 +39,8 @@ const NewSubscription = () => {
         await axios.get(`/api/newsubscription?userId=${userId}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
+
         setSuccess(true);
-        router.push("/");
       } catch (err) {
         setError("Erro ao emitir nova fatura.");
         router.push("/home");
@@ -76,6 +76,15 @@ const NewSubscription = () => {
 
     setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
   };
+
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        router.push("/home");
+      }, 5000);
+    }
+  }, [success]);
+
 
   return (
     <div>
@@ -178,7 +187,15 @@ const NewSubscription = () => {
               </p>
               {loading ? (
                 <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
-                  loading
+                  <div className='flex justify-center'>
+                    <Image
+                      src={loadingIcon}
+                      width={25}
+                      height={25}
+                      style={{ animation: 'rotate .7s linear infinite' }}
+                      alt="Loading"
+                    />
+                  </div>
                 </button>
               ) : (
                 <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>

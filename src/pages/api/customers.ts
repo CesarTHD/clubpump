@@ -4,16 +4,16 @@ import axios from 'axios';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email } = req.body;
   const { customerId } = req.query;
-
+  const TOKEN_API = process.env.SECRET_API_KEY;
   try {
     let urlApi
     if(email){
-      urlApi = `https://api.iugu.com/v1/customers?query=email%3A${email}&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
-      // urlApi = `https://api.iugu.com/v1/customers?query=email%3Ametregabriel@gmail.com&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
-      // urlApi = `https://api.iugu.com/v1/customers?query=email%3Avaldecis@gmail.com&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
-      // urlApi = `https://api.iugu.com/v1/customers?query=email%3Aportela@live.com&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+      urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers?query=email%3A${email}&api_token=${TOKEN_API}`;
+      // urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers?query=email%3Ametregabriel@gmail.com&api_token=${TOKEN_API}`;
+      // urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers?query=email%3Avaldecis@gmail.com&api_token=${TOKEN_API}`;
+      // urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers?query=email%3Aportela@live.com&api_token=${TOKEN_API}`;
     }else{
-      urlApi = `https://api.iugu.com/v1/customers/${customerId}?api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+      urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers/${customerId}?api_token=${TOKEN_API}`;
     }
     
     const response = await axios.get(urlApi, {

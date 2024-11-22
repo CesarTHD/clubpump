@@ -4,8 +4,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 export default async function createCustomer(req: NextApiRequest, res: NextApiResponse) {
     const user = req.body;
 
-    const TOKEN_API = "38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533";
-    const url = `https://api.iugu.com/v1/customers?api_token=${TOKEN_API}`;
+    const TOKEN_API = process.env.SECRET_API_KEY;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/customers?api_token=${TOKEN_API}`;
 
 
     const options = {

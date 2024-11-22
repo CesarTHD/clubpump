@@ -14,43 +14,59 @@ const Home = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [consultant, setConsultant] = useState("");
     const [subscriptions, setSubscriptions]: any = useState([]);
-    
+    const [firstName, setFirstName]: any = useState("");
+    const [lastName, setLastName]: any = useState("");
+
+
     useEffect(() => {
         setIsMounted(true);
+        if (user?.name) {
+            const name = user?.name.split(" ");
+            setFirstName(name[0]);
+            setLastName(name[1]);
+        }
     }, []);
-    
-    let firstName = "", lastName = "";
-    const name = user?.name.split(" ");
-    if(name) {
-        firstName = name[0];
-        lastName = name[1];
-    }
 
-    return (
-        <div>
-            <div className="md:max-w-[80rem] mx-auto">
-                {<h1 className="text-center  mt-16 text-4xl font-semibold">Olá, {firstName}{lastName && ` ${lastName}`}.</h1>}
-                {subscriptions[0]?.custom_variables[0]?.name && (
-                    <div className="">
-                        <p className="text-center text-lg">Consultor: <span>{subscriptions[0].custom_variables[0].name}</span></p>
-                    </div>
-                )}
-                <VerificationSubscription email={user?.email} setConsultant={setConsultant} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
-                <div className="my-36 pl-12">
-                    <div>
-                        <h3 className="text-xl">Opções:</h3>
-                        <ul className="mt-2 list-disc pl-8">
-                            <li>
-                                <button onClick={() => { router.push("/update-card") }} className="text-blue-400">
-                                    Trocar cartão de crédito
-                                </button>
-                            </li>
-                        </ul>
+    if(!firstName){
+        return (
+            <div className="flex w-full justify-center items-center ">
+                <p className="text-3xl font-bold">Carregando...</p>
+            </div>
+        )
+    } else {
+        return (
+            <div>
+                <div className="md:max-w-[80rem] mx-auto">
+                    {lastName ? (
+                        <h1 className="text-center  mt-16 text-4xl font-semibold">Olá, {firstName} {lastName}.</h1>
+                    ) : (
+                        <h1 className="text-center  mt-16 text-4xl font-semibold">Olá, {firstName}.</h1>
+                    )}
+                    {subscriptions.length > 0 && subscriptions[0]?.custom_variables?.[0]?.name && (
+                        <div>
+                            <p className="text-center text-lg">
+                                Consultor: <span>{subscriptions[0].custom_variables[0].name}</span>
+                            </p>
+                        </div>
+                    )}
+    
+                    <VerificationSubscription email={user?.email} setConsultant={setConsultant} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
+                    <div className="my-36 pl-12">
+                        <div>
+                            <h3 className="text-xl">Opções:</h3>
+                            <ul className="mt-2 list-disc pl-8">
+                                <li>
+                                    <button onClick={() => { router.push("/update-card") }} className="text-blue-400">
+                                        Trocar cartão de crédito
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Home

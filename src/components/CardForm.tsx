@@ -49,7 +49,6 @@ const CardForm = ({ userId, setStep }: any) => {
   }
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data)
     setLoading(true);
     setError("");
     try {

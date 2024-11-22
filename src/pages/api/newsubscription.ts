@@ -5,11 +5,12 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId } = req.query;
+  const TOKEN_API = process.env.SECRET_API_KEY;
 
   if (!userId) {
     return res.status(500).json({ error: 'ID é obrigatório' });
   }
-  const url = `https://api.iugu.com/v1/subscriptions?api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/subscriptions?api_token=${TOKEN_API}`;
 
   const options = {
     method: 'POST',

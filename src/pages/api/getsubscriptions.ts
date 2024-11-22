@@ -5,13 +5,13 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email } = req.query;
-
+  const API_TOKEN = process.env.SECRET_API_KEY;
   if (!email) {
     return res.status(500).json({ error: 'email é obrigatório' });
   }
 
   try {
-    const urlApi = `https://api.iugu.com/v1/subscriptions?query=customer_email%3A${email}&api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+    const urlApi = `${process.env.NEXT_PUBLIC_API_URL}/subscriptions?query=customer_email%3A${email}&api_token=${API_TOKEN}`;
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },
     });

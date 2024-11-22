@@ -7,7 +7,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
   const {user}:any = useContext(useAuthContext);
 
   try {
-    const urlApi = `https://api.iugu.com/v1/customers/${user.id}/payment_methods`;
+    const urlApi = `${process.env.NEXT_PUBLIC_API_URL}/customers/${user.id}/payment_methods`;
     
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },

@@ -5,11 +5,12 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { invoiceId } = req.query;
+  const TOKEN_API = process.env.SECRET_API_KEY;
 
   if (!invoiceId) {
     return res.status(500).json({ error: 'ID é obrigatório' });
   }
-  const url = `https://api.iugu.com/v1/invoices/${invoiceId}/duplicate?api_token=38065F43CCBB2D4A4C507782AD80AFA8860B02EBE4C3AFB32ECEDD583464D533`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/invoices/${invoiceId}/duplicate?api_token=${TOKEN_API}`;
 
   const options = {
     method: 'POST',
@@ -20,10 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const response = await fetch(url, options);
     const data = await response.json();
-    console.log("certo", data)
     return res.status(200).json({data});
   } catch (error) {
-    console.log("errado", error)
     return res.status(500).json({error});
   }
 }

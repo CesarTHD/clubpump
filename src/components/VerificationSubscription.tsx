@@ -10,7 +10,7 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [newSubscription, setNewSubscription] = useState(false);
+    const [invoiceStatus, setInvoiceStatus] = useState("");
     const [subscriptionOk, setSubscriptionOk] = useState(false);
     const [option, setOption] = useState(0);
     const [invoice, setInvoice]: any = useState();
@@ -68,7 +68,8 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
 
             const { suspended, arrays } = await checkSuspended(subscriptions);
             setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-
+            setInvoiceStatus(arrays.noSuspendeds[0]?.recent_invoices[0]?.status)
+            console.log();
             if (suspended) {
                 setOption(2); // Condição suspensa, não precisa continuar
                 return;
@@ -113,13 +114,19 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                     console.log(error);
                 }
             } else {
-                setOption(3); // arrays.includedsPaid.length === 0
+                if(invoiceStatus === "pending"){
+                    setOption(3); // arrays.includedsPaid.length === 0
+                } else {
+                    setOption(2);
+                }
             }
             
         };
 
         checkActive();
     }, [subscriptions]);
+
+    console.log(invoiceStatus);
 
     return (
         <div className="text-center">
@@ -170,7 +177,7 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                                     option === 4 && (
                                         <div>
                                             <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
-                                            <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
+                                            <button onClick={() => router.push(`/update-card`)}
                                                 className="text-blue-400 hover:underline"
                                             >
                                                 <span className="text-lg">Atualize seu método de pagamento.</span>
