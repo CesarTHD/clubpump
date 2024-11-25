@@ -88,19 +88,24 @@ const Login = () => {
                 <Input {...register('password')} type='password' />
                 {error && (<div className='text-red-500 text-sm font-light mt-2' dangerouslySetInnerHTML={{ __html: error }} />)}
               </Field>
-              <Button type='submit' disabled={loading === true} className='hover:cursor-pointer min-w-32'>
-                {!loading ? (
-                  <span>Entrar</span>
-                ) : (
-                  <Image
-                    src={loadingIcon}
-                    width={25}
-                    height={25}
-                    style={{ animation: 'rotate .7s linear infinite' }}
-                    alt="Loading"
-                  />
-                )}
-              </Button>
+              <div className='flex justify-between'>
+                <Button type='submit' disabled={loading === true} className='hover:cursor-pointer min-w-32'>
+                  {!loading ? (
+                    <span>Entrar</span>
+                  ) : (
+                    <Image
+                      src={loadingIcon}
+                      width={25}
+                      height={25}
+                      style={{ animation: 'rotate .7s linear infinite' }}
+                      alt="Loading"
+                    />
+                  )}
+                </Button>
+                  <div className='text-end text-sm'>
+                    <span>Ainda não é cliente pump?<br /><button type='button' onClick={() => router.push("/checkout")} className='text-blue-400 hover:underline'>Cadastre-se</button></span>
+                  </div>
+              </div>
             </FieldGroup>
           </Fieldset>
         </form>

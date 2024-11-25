@@ -1,7 +1,7 @@
 'use client';
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Field, FieldGroup, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
+import { Field, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
 import Image from 'next/image';
@@ -17,7 +17,7 @@ const UpdateCard = () => {
     const [cardDisplay, setCardDisplay] = useState("");
     const [expirationDisplay, setExpirationDisplay] = useState("");
     const [success, setSuccess] = useState(false);
-
+    const [loadingScreen, setLoadingScreen] = useState(true);
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -46,8 +46,6 @@ const UpdateCard = () => {
                         headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
                     });
                 }
-
-                console.log("aa", invoice);
 
                 setSuccess(true);
             } catch (err) {
@@ -97,6 +95,28 @@ const UpdateCard = () => {
             }, 5000);
         }
     }, [success]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoadingScreen(false);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (loadingScreen) {
+        return (
+            <div className='w-full h-96 flex justify-center items-center'>
+                <Image
+                    src={loadingIcon}
+                    width={50}
+                    height={50}
+                    style={{ animation: "rotate 0.7s linear infinite" }}
+                    alt="Loading"
+                />
+            </div>
+        )
+    }
 
 
     return (

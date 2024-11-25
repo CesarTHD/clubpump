@@ -51,18 +51,6 @@ const Home = () => {
                     )}
     
                     <VerificationSubscription email={user?.email} setConsultant={setConsultant} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
-                    <div className="my-36 pl-12">
-                        <div>
-                            <h3 className="text-xl">Opções:</h3>
-                            <ul className="mt-2 list-disc pl-8">
-                                <li>
-                                    <button onClick={() => { router.push("/update-card") }} className="text-blue-400">
-                                        Trocar cartão de crédito
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
             </div>
         )

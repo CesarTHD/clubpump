@@ -10,31 +10,35 @@ import Success from '@/components/Success';
 const Checkout = () => {
     const [step, setStep] = useState(1);
     const [userId, setUserId] = useState("");
-    const [consultants, setConsultants] = useState("");
-
-    const getConsultants = async () => {
-        try {
-            const urlApi = `/api/getconsultants`;
-
-            const response = await axios.get(urlApi, {
-                headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-            });
-
-            const consultantsCSV = response.data.content.rendered;
-            const cleanedInput = consultantsCSV.replace(/<\/?p>/g, "");
-            const consultantsArray = cleanedInput.split(",").map((item: any) => item.trim());
-            setConsultants(consultantsArray);
-
-        } catch (error) {
-            console.log("error", error);
-        }
-    }
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if(userId){
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 500); // 1 segundo de loading
+
+        return () => clearTimeout(timer); // Cleanup no unmount
+    }, []);
+
+    useEffect(() => {
+        if (userId) {
             setStep(2);
         }
     }, [userId]);
+
+    if (isLoading) {
+        return (
+            <div className='w-full h-96 flex justify-center items-center'>
+                <Image
+                    src={loadingIcon}
+                    width={50}
+                    height={50}
+                    style={{ animation: "rotate 0.7s linear infinite" }}
+                    alt="Loading"
+                />
+            </div>
+        )
+    }
 
     return (
         <div>
@@ -64,5 +68,4 @@ const Checkout = () => {
         </div>
     )
 }
-
 export default Checkout

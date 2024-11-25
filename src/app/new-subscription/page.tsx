@@ -17,6 +17,7 @@ const NewSubscription = () => {
   const [cardDisplay, setCardDisplay] = useState("");
   const [expirationDisplay, setExpirationDisplay] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(true);
 
   const router = useRouter();
 
@@ -84,6 +85,30 @@ const NewSubscription = () => {
       }, 5000);
     }
   }, [success]);
+
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingScreen(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loadingScreen) {
+    return (
+      <div className='w-full h-96 flex justify-center items-center'>
+        <Image
+          src={loadingIcon}
+          width={50}
+          height={50}
+          style={{ animation: "rotate 0.7s linear infinite" }}
+          alt="Loading"
+        />
+      </div>
+    )
+  }
 
 
   return (

@@ -6,7 +6,7 @@ import { getSubscriptions } from "@/functions/getSubscriptions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const VerificationSubscription = ({email, setConsultant, subscriptions, setSubscriptions}:any ) => {
+const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubscriptions }: any) => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -114,13 +114,13 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
                     console.log(error);
                 }
             } else {
-                if(invoiceStatus === "pending"){
+                if (invoiceStatus === "pending") {
                     setOption(3); // arrays.includedsPaid.length === 0
                 } else {
                     setOption(2);
                 }
             }
-            
+
         };
 
         checkActive();
@@ -129,67 +129,83 @@ const VerificationSubscription = ({email, setConsultant, subscriptions, setSubsc
     console.log(invoiceStatus);
 
     return (
-        <div className="text-center">
-            <div className={subscriptionOk ? "border border-green-400 md:mx-auto mt-10 max-w-fit mx-4 px-10 rounded-xl" : "border border-red-500 mx-auto mt-10 max-w-fit px-10 rounded-xl"}>
-                <Table className="w-full">
-                    <TableBody>
-                        <TableRow className="text-zinc-300">
-                            <TableCell className="">
-                                {
-                                    option === 0 && (
-                                        <p className="whitespace-normal text-lg">
-                                            Loading...
-                                        </p>
-                                    )
-                                }
-                                {
-                                    option === 1 && (
-                                        <p className="whitespace-normal text-lg">
-                                            Sua assinatura está em dias. Aproveite nossos benefícios!
-                                        </p>
-                                    )
-                                }
-                                {
-                                    option === 2 && (
-                                        <div className="">
-                                            <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
-                                            <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
-                                                className="text-blue-400 hover:underline"
-                                            >
-                                                <span className="text-lg">Criar uma nova assinatura.</span>
-                                            </button>
-                                        </div>
-                                    )
-                                }
-                                {
-                                    option === 3 && (
-                                        <div>
-                                            <p className="whitespace-normal text-lg  block md:inline">Erro ao pagar fatura.{" "}</p>
-                                            <button onClick={() => router.push(`/update-card?invoiceId=${invoice}`)}
-                                                className="text-blue-400 hover:underline"
-                                            >
-                                                <span className="text-lg">Atualize seu método de pagamento.</span>
-                                            </button>
-                                        </div>
-                                    )
-                                }
-                                {
-                                    option === 4 && (
-                                        <div>
-                                            <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
-                                            <button onClick={() => router.push(`/update-card`)}
-                                                className="text-blue-400 hover:underline"
-                                            >
-                                                <span className="text-lg">Atualize seu método de pagamento.</span>
-                                            </button>
-                                        </div>
-                                    )
-                                }
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
+        <div>
+            <div className="text-center">
+                <div className={subscriptionOk ? "border border-green-400 md:mx-auto mt-10 max-w-fit mx-4 px-10 rounded-xl" : "border border-red-500 mx-auto mt-10 max-w-fit px-10 rounded-xl"}>
+                    <Table className="w-full">
+                        <TableBody>
+                            <TableRow className="text-zinc-300">
+                                <TableCell className="">
+                                    {
+                                        option === 0 && (
+                                            <p className="whitespace-normal text-lg">
+                                                Loading...
+                                            </p>
+                                        )
+                                    }
+                                    {
+                                        option === 1 && (
+                                            <p className="whitespace-normal text-lg">
+                                                Sua assinatura está em dias. Aproveite nossos benefícios!
+                                            </p>
+                                        )
+                                    }
+                                    {
+                                        option === 2 && (
+                                            <div className="">
+                                                <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
+                                                <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Criar uma nova assinatura.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        option === 3 && (
+                                            <div>
+                                                <p className="whitespace-normal text-lg  block md:inline">Erro ao pagar fatura.{" "}</p>
+                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}&invoiceId=${invoice}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Atualize seu método de pagamento.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        option === 4 && (
+                                            <div>
+                                                <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
+                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Atualize seu método de pagamento.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
+            {option === 1 &&
+                <div className="my-36 pl-12">
+                    <div>
+                        <h3 className="text-xl">Opções:</h3>
+                        <ul className="mt-2 list-disc pl-8">
+                            <li>
+                                <button onClick={() => { router.push(`/update-card?userId=${subscriptions[0].customer_id}`) }} className="text-blue-400">
+                                    Trocar cartão de crédito
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
         </div>
     )
 }
