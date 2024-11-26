@@ -130,7 +130,7 @@ const CustomerForm = ({setUserId}: any) => {
           </div>
           <div className="flex flex-col md:flex-row gap-4">
             <Field className='w-full'>
-              <Label><p className='font-semibold text-lg'>CPF/CNPJ:</p></Label>
+              <Label><p className='font-semibold text-lg'>CPF/CNPJ: <span className='text-xs font-normal text-gray-600'>será sua senha de login</span></p></Label>
               <Input
                 {...register('cpf_cnpj', {
                   required: "CPF/CNPJ é obrigatório",
