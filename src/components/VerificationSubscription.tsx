@@ -69,7 +69,9 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
 
             const { suspended, arrays } = await checkSuspended(subscriptions);
             setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-            setInvoiceStatus(arrays.noSuspendeds[0]?.recent_invoices[0]?.status)
+            if(arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending"){
+                setInvoiceStatus(arrays.noSuspendeds[0]?.recent_invoices[0]?.status);
+            }
             console.log();
             if (suspended) {
                 setOption(2); // Condição suspensa, não precisa continuar
