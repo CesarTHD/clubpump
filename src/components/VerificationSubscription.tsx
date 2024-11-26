@@ -69,10 +69,7 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
 
             const { suspended, arrays } = await checkSuspended(subscriptions);
             setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-            if(arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending"){
-                setInvoiceStatus(arrays.noSuspendeds[0]?.recent_invoices[0]?.status);
-            }
-            console.log();
+            
             if (suspended) {
                 setOption(2); // Condição suspensa, não precisa continuar
                 return;
@@ -117,7 +114,7 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
                     console.log(error);
                 }
             } else {
-                if (invoiceStatus === "pending") {
+                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending") {
                     setOption(3); // arrays.includedsPaid.length === 0
                 } else {
                     setOption(2);
@@ -128,8 +125,6 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
 
         checkActive();
     }, [subscriptions]);
-
-    console.log(subscriptions[0]);
 
     return (
         <div>
