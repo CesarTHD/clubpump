@@ -10,7 +10,6 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [invoiceStatus, setInvoiceStatus] = useState("");
     const [subscriptionOk, setSubscriptionOk] = useState(false);
     const [option, setOption] = useState(0);
     const [invoice, setInvoice]: any = useState();
