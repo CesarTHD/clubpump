@@ -5,6 +5,7 @@ import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId } = req.query;
+  const { consultant } = req.query;
   const TOKEN_API = process.env.SECRET_API_KEY;
 
   if (!userId) {
@@ -19,6 +20,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       plan_identifier: 'MENSAL',
       customer_id: userId,
       only_on_charge_success: true,
+      custom_variables: [
+        {
+          name: consultant,
+          value: ""
+        }
+      ]
     })
   };
 

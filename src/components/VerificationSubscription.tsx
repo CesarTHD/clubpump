@@ -62,6 +62,7 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
         if (subscriptions.length === 0) get();
     }, []);
 
+    
     useEffect(() => {
         const checkActive = async () => {
             if (!subscriptions || subscriptions.length === 0) return; // Verifica se subscriptions existe e se não está vazio
@@ -126,7 +127,7 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
         checkActive();
     }, [subscriptions]);
 
-    console.log(invoiceStatus);
+    console.log(subscriptions[0]);
 
     return (
         <div>

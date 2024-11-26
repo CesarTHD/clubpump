@@ -64,7 +64,7 @@ const CardForm = ({ userId, setStep }: any) => {
         const subscription = await axios.get(`/api/newsubscription?userId=${userId}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
-        
+
         setStep(3);
       } catch (err) {
         setLoading(false);
@@ -82,7 +82,7 @@ const CardForm = ({ userId, setStep }: any) => {
   };
 
   useEffect(() => {
-    // getConsultants();
+    getConsultants();
   }, []);
 
   return (
@@ -167,6 +167,18 @@ const CardForm = ({ userId, setStep }: any) => {
               {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
             </Field>
           </div>
+          <Field className='w-full mt-4'>
+            <Label><p className=''>Nome do consultor:</p></Label>
+            <Select
+              {...register('consultantName')}
+              className='text-sm border rounded-md p-2 mt-2 w-full'
+            >
+              <option value="">Selecione um consultor</option>
+              {consultants && consultants.map((consultant: any) => (
+                <option key={consultant} value={consultant}>{consultant}</option>
+              ))}
+            </Select>
+          </Field>
           <p className='mt-6 text-xs leading-4'>
             Ao clicar no botão “Cadastrar-se” abaixo,
             você concorda com nosso <a className='text-blue-400' href="#" target='_blank'>TERMO DE USO</a> e aceita que a Pump

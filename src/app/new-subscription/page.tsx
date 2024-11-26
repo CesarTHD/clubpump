@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import loadingIcon from '@/assets/loading.png';
 import Image from 'next/image';
+import { Select } from '@headlessui/react';
 
 const NewSubscription = () => {
   const [loading, setLoading] = useState(false);
@@ -18,11 +19,30 @@ const NewSubscription = () => {
   const [expirationDisplay, setExpirationDisplay] = useState("");
   const [success, setSuccess] = useState(false);
   const [loadingScreen, setLoadingScreen] = useState(true);
+  const [consultants, setConsultants]: any = useState([]);
 
   const router = useRouter();
 
   const searchParams = useSearchParams();
   const userId = searchParams?.get("userId");
+
+  const getConsultants = async () => {
+    try {
+      const urlApi = `/api/getconsultants`;
+
+      const response = await axios.get(urlApi, {
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      });
+
+      const consultantsCSV = response.data.content.rendered;
+      const cleanedInput = consultantsCSV.replace(/<\/?p>/g, "");
+      const consultantsArray = cleanedInput.split(",").map((item: any) => item.trim());
+      setConsultants(consultantsArray);
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
 
   const handleFormSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
@@ -37,7 +57,7 @@ const NewSubscription = () => {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
-        await axios.get(`/api/newsubscription?userId=${userId}`, {
+        await axios.get(`/api/newsubscription?userId=${userId}&consultant=${data.consultantName}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
@@ -81,7 +101,7 @@ const NewSubscription = () => {
   useEffect(() => {
     if (success) {
       setTimeout(() => {
-        router.push("/home");
+        router.push("/");
       }, 5000);
     }
   }, [success]);
@@ -89,12 +109,15 @@ const NewSubscription = () => {
 
 
   useEffect(() => {
+    getConsultants();
+
     const timer = setTimeout(() => {
       setLoadingScreen(false);
     }, 500);
 
     return () => clearTimeout(timer);
   }, []);
+
 
   if (loadingScreen) {
     return (
@@ -110,16 +133,15 @@ const NewSubscription = () => {
     )
   }
 
-
   return (
     <div>
       {success && (
-        <div className='bg-black bg-opacity-80 flex text-center justify-center items-center absolute top-0 w-full h-[100vh] z-50'>
+        <div className='bg-black bg-opacity-80 flex text-center justify-center items-center absolute top-0 w-full h-[90vh] z-50'>
           <h1 className='text-3xl font-bold'>Assinatura efetivada com sucesso! Aproveite nossos benefícios.</h1>
         </div>
       )}
       <form className='flex flex-col md:flex-row justify-center w-full px-4 md:px-16 gap-8 bg-white text-neutral-800 py-20' onSubmit={handleSubmit(handleFormSubmit)}>
-        <div className='flex flex-col w-full md:w-1/3'>
+        <div className='flex flex-col w-full md:w-2/3 xl:w-1/3'>
           <div className='border rounded-lg p-8'>
             <table className='w-full'>
               <thead className='font-semibold text-lg'>
@@ -204,6 +226,18 @@ const NewSubscription = () => {
                   {errors.cvv && <p className='text-red-500 text-sm'>*{errors.cvv.message}</p>}
                 </Field>
               </div>
+              <Field className='w-full mt-4'>
+                <Label><p className=''>Nome do consultor:</p></Label>
+                <Select
+                  {...register('consultantName')}
+                  className='text-sm border rounded-md p-2 mt-2 w-full'
+                >
+                  <option value="">Selecione um consultor</option>
+                  {consultants && consultants.map((consultant: any) => (
+                    <option key={consultant} value={consultant}>{consultant}</option>
+                  ))}
+                </Select>
+              </Field>
               <p className='mt-6 text-xs leading-4'>
                 Ao clicar no botão “Assine agora” abaixo,
                 você concorda com nosso <a className='text-blue-400' href="#" target='_blank'>TERMO DE USO</a> e aceita que a Pump

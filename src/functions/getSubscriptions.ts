@@ -11,7 +11,6 @@ export const getSubscriptions = async (email: string) => {
 
         const subscriptionResponse = await response.data;
         return subscriptionResponse.items;
-        // setSubscriptions(subscriptionResponse.items);
     } catch (err) {
         return err;
     }
