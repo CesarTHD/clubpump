@@ -1,8 +1,6 @@
 'use client';
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { TypeCustomer } from '@/types/Customer';
-import { FormValues } from '@/types/FormValues';
 import { Field, FieldGroup, Fieldset, Label, Legend } from '@/components/catalyst-ui-kit/fieldset';
 import { Input } from '@/components/catalyst-ui-kit/input';
 import { Text } from '@/components/catalyst-ui-kit/text';
@@ -12,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import loadingIcon from '@/assets/loading.png';
 import { useAuthContext } from '@/context/useAuth';
-import Header from '@/components/Header';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);

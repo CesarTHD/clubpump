@@ -1,25 +1,24 @@
 "use client";
 import Image from "next/image";
 import { Table, TableBody, TableCell, TableRow } from "@/components/catalyst-ui-kit/table";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSubscriptions } from "@/functions/getSubscriptions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/context/useAuth";
 
-const VerificationSubscription = ({ email, subscriptions, setSubscriptions, userId }: any) => { 
+const VerificationSubscription = ({ email, subscriptions, setSubscriptions, userId }: any) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [subscriptionOk, setSubscriptionOk] = useState(false);
     const [option, setOption] = useState(0);
     const [invoice, setInvoice]: any = useState();
-    const [customerId, setCustomerId]: any = useState();
+    const [customerId, setCustomerId]: any = useState("");
 
-    const { user }: any = useContext(useAuthContext);
+
     const router = useRouter();
 
     const normalizeSubscriptions = (subscriptions: any) => {
-        if (!subscriptions || subscriptions.response.data.error.length > 0) return [];
+        if (!subscriptions || subscriptions.reponse.data.error.length > 0) return [];
         return Array.isArray(subscriptions) ? subscriptions : [subscriptions];
     };
 
@@ -30,7 +29,6 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
             setSubscriptions(normalizeSubscriptions(response));
         } catch (error: any) {
             setError(error);
-            router.push("/");
         } finally {
             setLoading(false);
         }
@@ -38,23 +36,23 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
 
     async function checkSuspended(subscriptions: any) {
         let countSuspended = 0;
-        let noSuspendeds: any = [];
-        let includedsPaid: any = [];
-        subscriptions?.map((subscription: any) => {
-            if (subscription.suspended) {
+        let noSuspendeds: any = []
+        let includedsPaid: any = []
+        subscriptions?.map((subscription: any, index: number) => {
+            if (subscription.suspended === true) {
                 countSuspended += 1;
             } else {
                 noSuspendeds.push(subscription);
-                let dateCreatedSubs = subscription.created_at.split('T')[0];
-                subscription.recent_invoices?.map((invoice: any) => {
-                    if (invoice.status.includes("paid") && invoice.due_date === dateCreatedSubs) {
-                        includedsPaid.push(subscription);
-                    }
-                });
+                // let dateCreatedSubs = subscription.created_at.split('T')[0];
+                // if (subscription.recent_invoices[0].status.includes("paid") && invoice.due_date === dateCreatedSubs){
+                if (subscription.recent_invoices[0].status.includes("paid")){
+                    includedsPaid.push(subscription);
+                }
             }
-        });
+        })
+
         return {
-            suspended: countSuspended === subscriptions.length,
+            isAllSuspended: countSuspended === subscriptions.length,
             arrays: {
                 noSuspendeds,
                 includedsPaid
@@ -65,32 +63,36 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
     useEffect(() => {
         if (subscriptions.length === 0) get();
     }, []);
-
+    
     useEffect(() => {
         const checkActive = async () => {
-            if (!subscriptions || subscriptions.length === 0) {
+            setLoading(true);
+            if (!subscriptions || subscriptions.length === 0){
+                setCustomerId(userId);
+                setLoading(false);
                 setOption(2);
-                setCustomerId(userId); // Passa userId como customerId caso o array de subscriptions esteja vazio
-                return;
-            }
-
-            const { suspended, arrays } = await checkSuspended(subscriptions);
-            if (arrays.noSuspendeds.length > 0) {
+                return; // Verifica se subscriptions existe e se não está vazio
+            } 
+            
+            const { isAllSuspended, arrays } = await checkSuspended(subscriptions);
+            if(arrays.noSuspendeds.length > 0){
                 setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-            } else {
+            }else if (arrays.noSuspendeds){
                 setInvoice(arrays.noSuspendeds?.recent_invoices[0]?.id);
             }
-
-            if (suspended) {
-                setOption(2);
-                setCustomerId(subscriptions[0]?.customer_id); // Primeiro ID de assinatura suspensa
+            
+            if (isAllSuspended) {
+                setLoading(false);
+                setOption(2); // Condição suspensa, não precisa continuar
                 return;
             }
-
+            
             if (arrays.includedsPaid.length > 0) {
                 try {
-                    let hasActiveSubscription = false;
-                    const requests = arrays.includedsPaid.map(async (subscription: any) => {
+                    let hasActiveSubscription = false; // Variável local para controlar assinaturas ativas
+
+                    // Cria uma lista de promessas para todas as requisições axios.get
+                    const requests = arrays.includedsPaid?.map(async (subscription: any) => {
                         const urlCustomer = `/api/customers?customerId=${subscription.customer_id}`;
                         const response = await axios.get(urlCustomer, {
                             headers: {
@@ -99,41 +101,46 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                                 'Cache-Control': 'no-cache'
                             },
                         });
-
+                        
                         const customer = response.data;
+                        
+                        // Passou na condição 3
                         if (customer.payment_methods.length > 0) {
                             activeSubscriptions.push(subscription);
-                            hasActiveSubscription = true;
-                            setCustomerId(subscription.customer_id); // Define ID de uma assinatura ativa
+                            hasActiveSubscription = true; // Marca como tendo uma assinatura ativa
                         }
                     });
-
+                    
+                    // Espera todas as requisições serem concluídas
                     await Promise.all(requests);
-
+                    
                     if (!hasActiveSubscription) {
-                        setOption(4);
-                        setCustomerId(arrays.includedsPaid[0]?.customer_id); // Define ID com erro de pagamento
+                        setOption(4); // Caso nenhum método de pagamento esteja OK
                     } else {
                         setSubscriptionOk(true);
-                        setOption(1);
+                        setOption(1); // Assinatura está OK
                     }
+                    
                 } catch (error) {
                     console.log(error);
+                } finally {
+                    setLoading(false);
                 }
             } else {
-                const pendingInvoice = arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending" || arrays.noSuspendeds?.recent_invoices[0]?.status === "pending";
-                if (pendingInvoice) {
+                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending" || arrays.noSuspendeds?.recent_invoices[0]?.status === "pending") {
                     setOption(3);
-                    setCustomerId(arrays.noSuspendeds[0]?.customer_id); // ID da assinatura com fatura pendente
+                    setLoading(false);
                 } else {
                     setOption(2);
-                    setCustomerId(subscriptions[0]?.customer_id); // Primeiro ID de assinatura não suspensa
+                    setLoading(false);
                 }
             }
+
         };
 
         checkActive();
     }, [subscriptions]);
+
 
     return (
         <div>
@@ -142,55 +149,79 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                     <Table className="w-full">
                         <TableBody>
                             <TableRow className="text-zinc-300">
-                                <TableCell>
-                                    {option === 0 && <p className="whitespace-normal text-lg">Loading...</p>}
-                                    {option === 1 && <p className="whitespace-normal text-lg">Sua assinatura está em dias. Aproveite nossos benefícios!</p>}
-                                    {option === 2 && (
-                                        <div>
-                                            <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
-                                            <button onClick={() => router.push(`/new-subscription?userId=${customerId}`)} className="text-blue-400 hover:underline">
-                                                <span className="text-lg">Criar uma nova assinatura.</span>
-                                            </button>
-                                        </div>
-                                    )}
-                                    {option === 3 && (
-                                        <div>
-                                            <p className="whitespace-normal text-lg block md:inline">Erro ao pagar fatura.{" "}</p>
-                                            <button onClick={() => router.push(`/update-card?userId=${customerId}&invoiceId=${invoice}`)} className="text-blue-400 hover:underline">
-                                                <span className="text-lg">Atualize seu método de pagamento.</span>
-                                            </button>
-                                        </div>
-                                    )}
-                                    {option === 4 && (
-                                        <div>
-                                            <p className="whitespace-normal text-lg block md:inline">Erro com cartão de crédito.{" "}</p>
-                                            <button onClick={() => router.push(`/update-card?userId=${customerId}`)} className="text-blue-400 hover:underline">
-                                                <span className="text-lg">Atualize seu método de pagamento.</span>
-                                            </button>
-                                        </div>
-                                    )}
+                                <TableCell className="">
+                                    {
+                                        loading && (
+                                            <p className="whitespace-normal text-lg">
+                                                Loading...
+                                            </p>
+                                        )
+                                    }
+                                    {
+                                        !loading && option === 1 && (
+                                            <p className="whitespace-normal text-lg">
+                                                Sua assinatura está em dias. Aproveite nossos benefícios!
+                                            </p>
+                                        )
+                                    }
+                                    {
+                                        !loading && option === 2 && (
+                                            <div className="">
+                                                <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
+                                                <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Criar uma nova assinatura.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        !loading && option === 3 && (
+                                            <div>
+                                                <p className="whitespace-normal text-lg  block md:inline">Erro ao pagar fatura.{" "}</p>
+                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}&invoiceId=${invoice}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Atualize seu método de pagamento.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        !loading && option === 4 && (
+                                            <div>
+                                                <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
+                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}`)}
+                                                    className="text-blue-400 hover:underline"
+                                                >
+                                                    <span className="text-lg">Atualize seu método de pagamento.</span>
+                                                </button>
+                                            </div>
+                                        )
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
                 </div>
             </div>
-            {option === 1 && (
+            {!loading && option === 1 &&
                 <div className="my-36 pl-12">
                     <div>
                         <h3 className="text-xl">Opções:</h3>
                         <ul className="mt-2 list-disc pl-8">
                             <li>
-                                <button onClick={() => router.push(`/update-card?userId=${customerId}`)} className="text-blue-400">
+                                <button onClick={() => { router.push(`/update-card?userId=${subscriptions[0].customer_id}`) }} className="text-blue-400">
                                     Trocar cartão de crédito
                                 </button>
                             </li>
                         </ul>
                     </div>
                 </div>
-            )}
+            }
         </div>
-    );
-};
+    )
+}
 
-export default VerificationSubscription;
+export default VerificationSubscription

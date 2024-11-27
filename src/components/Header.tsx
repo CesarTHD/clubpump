@@ -13,10 +13,6 @@ const Header = () => {
 
 
     const logout = () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem("club.userId");
-            localStorage.removeItem("club.user");
-        }
         setUser(null);
     }
 
