@@ -49,7 +49,7 @@ const Home = () => {
                         </div>
                     )}
     
-                    <VerificationSubscription email={user?.email} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
+                    <VerificationSubscription email={user?.email} userId={user?.id} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
                 </div>
             </div>
         )
