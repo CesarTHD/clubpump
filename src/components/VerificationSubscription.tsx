@@ -82,6 +82,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
             }
             
             if (isAllSuspended) {
+                setCustomerId(userId);
                 setLoading(false);
                 setOption(2); // Condição suspensa, não precisa continuar
                 return;
@@ -90,7 +91,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
             if (arrays.includedsPaid.length > 0) {
                 try {
                     let hasActiveSubscription = false; // Variável local para controlar assinaturas ativas
-
+                    
                     // Cria uma lista de promessas para todas as requisições axios.get
                     const requests = arrays.includedsPaid?.map(async (subscription: any) => {
                         const urlCustomer = `/api/customers?customerId=${subscription.customer_id}`;
@@ -107,6 +108,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                         // Passou na condição 3
                         if (customer.payment_methods.length > 0) {
                             activeSubscriptions.push(subscription);
+                            setCustomerId(subscription.customer_id);
                             hasActiveSubscription = true; // Marca como tendo uma assinatura ativa
                         }
                     });
@@ -127,7 +129,8 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                     setLoading(false);
                 }
             } else {
-                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending" || arrays.noSuspendeds?.recent_invoices[0]?.status === "pending") {
+                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending") {
+                    setCustomerId(arrays.noSuspendeds[0]?.customer_id);
                     setOption(3);
                     setLoading(false);
                 } else {
