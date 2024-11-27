@@ -12,7 +12,6 @@ const Home = () => {
     const router = useRouter();
     const { user }: any = useContext(useAuthContext);
     const [isMounted, setIsMounted] = useState(false);
-    const [consultant, setConsultant] = useState("");
     const [subscriptions, setSubscriptions]: any = useState([]);
     const [firstName, setFirstName]: any = useState("");
     const [lastName, setLastName]: any = useState("");
@@ -50,7 +49,7 @@ const Home = () => {
                         </div>
                     )}
     
-                    <VerificationSubscription email={user?.email} setConsultant={setConsultant} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
+                    <VerificationSubscription email={user?.email} subscriptions={subscriptions} setSubscriptions={setSubscriptions} />
                 </div>
             </div>
         )

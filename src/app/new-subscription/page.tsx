@@ -232,7 +232,6 @@ const NewSubscription = () => {
                   {...register('consultantName')}
                   className='text-sm border rounded-md p-2 mt-2 w-full'
                 >
-                  <option value="">Selecione um consultor</option>
                   {consultants && consultants.map((consultant: any) => (
                     <option key={consultant} value={consultant}>{consultant}</option>
                   ))}

@@ -14,10 +14,6 @@ import { formatCpfCnpj, handleCpfCnpjChange, validateCnpj, validateCpf } from '@
 import Image from 'next/image';
 import loadingIcon from '@/assets/loading.png';
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
-import { handleExpirationInputChange } from '@/functions/handleExpirationInputChange';
-import { handleCardInputChange } from '@/functions/handleCardInputChange';
-
-
 
 const CardForm = ({ userId, setStep }: any) => {
   const [error, setError] = useState("");
@@ -61,11 +57,18 @@ const CardForm = ({ userId, setStep }: any) => {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
-        const subscription = await axios.get(`/api/newsubscription?userId=${userId}`, {
+        const subscription = await axios.get(`/api/newsubscription?userId=${userId}&consultant=${data.consultantName}`, {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
-        setStep(3);
+        if (subscription.data.errors.length > 0) {
+          setError("Erro ao configurar método de pagamento, verifique os dados do cartão de crédito.")
+        } else {
+          setStep(3);
+        }
+
+        console.log(subscription);
+
       } catch (err) {
         setLoading(false);
         setError("Erro ao configurar método de pagamento, verifique os dados do cartão de crédito.");
@@ -79,6 +82,31 @@ const CardForm = ({ userId, setStep }: any) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+    // Limita a entrada a no máximo 16 dígitos sem espaços
+    if (rawValue.length > 16) return;
+
+    // Formata o valor com espaços a cada 4 dígitos
+    const formattedValue = rawValue.replace(/(\d{4})(?=\d)/g, '$1 '); // Adiciona espaços a cada 4 dígitos
+    setCardDisplay(formattedValue); // Atualiza a exibição formatada do input
+  };
+
+  const handleExpirationInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let rawValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+
+    // Limita a entrada a no máximo 6 dígitos (MMYYYY)
+    if (rawValue.length > 6) return;
+
+    // Adiciona a barra automaticamente após o mês (primeiros 2 dígitos)
+    if (rawValue.length >= 3) {
+      rawValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2)}`;
+    }
+
+    setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
   };
 
   useEffect(() => {
@@ -128,8 +156,8 @@ const CardForm = ({ userId, setStep }: any) => {
                   maxLength: { value: 19, message: "O cartão deve ter 16 dígitos" },
                   pattern: { value: /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/, message: "Formato inválido" }
                 })}
-                value={cardDisplay || ""}
-                onChange={(e) => setCardDisplay(handleCardInputChange(e) || cardDisplay)} // Garante estado consistente
+                value={cardDisplay}
+                onChange={handleCardInputChange} // Garante estado consistente
               />
               {errors.number && <p className='text-red-500 text-sm'>*{errors.number.message}</p>}
             </Field>
@@ -152,7 +180,7 @@ const CardForm = ({ userId, setStep }: any) => {
                 type="text"
                 placeholder="MM/AAAA"
                 value={expirationDisplay}
-                onChange={(e) => setExpirationDisplay(handleExpirationInputChange(e))}
+                onChange={handleExpirationInputChange}
               />
               {errors.expiration && <p className='text-red-500 text-sm'>*{errors.expiration.message}</p>}
             </Field>
@@ -173,7 +201,6 @@ const CardForm = ({ userId, setStep }: any) => {
               {...register('consultantName')}
               className='text-sm border rounded-md p-2 mt-2 w-full'
             >
-              <option value="">Selecione um consultor</option>
               {consultants && consultants.map((consultant: any) => (
                 <option key={consultant} value={consultant}>{consultant}</option>
               ))}
@@ -185,8 +212,18 @@ const CardForm = ({ userId, setStep }: any) => {
             renove automaticamente sua assinatura e cobre o
             preço da assinatura (atualmente R$19,95/mês).
           </p>
-          <button className='border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
-            CADASTRAR-SE
+          <button disabled={loading} className='flex justify-center items-center border rounded-lg h-16 mt-4 w-full text-2xl font-extrabold hover:text-3xl transition-all'>
+            {!loading ? (
+              <span>CADASTRAR-SE</span>
+            ) : (
+              <Image
+                src={loadingIcon}
+                width={25}
+                height={25}
+                style={{ animation: 'rotate .7s linear infinite' }}
+                alt="Loading"
+              />
+            )}
           </button>
           {error && <p className="text-sm text-red-600 mt-4">* {error}</p>}
         </Fieldset>

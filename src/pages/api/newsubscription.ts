@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       only_on_charge_success: true,
       custom_variables: [
         {
-          name: consultant,
+          name: consultant || "",
           value: ""
         }
       ]
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const response = await fetch(url, options);
     const data = await response.json();
-    return res.status(200).json({data});
+    return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({error});
   }

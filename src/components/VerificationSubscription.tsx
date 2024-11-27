@@ -6,7 +6,7 @@ import { getSubscriptions } from "@/functions/getSubscriptions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubscriptions }: any) => {
+const VerificationSubscription = ({ email, subscriptions, setSubscriptions }: any) => {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -28,14 +28,13 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
         } finally {
             setLoading(false);
         }
-
     }
 
     async function checkSuspended(subscriptions: any) {
         let countSuspended = 0;
         let noSuspendeds: any = []
         let includedsPaid: any = []
-        subscriptions.map((subscription: any, index: number) => {
+        subscriptions?.map((subscription: any, index: number) => {
             if (subscription.suspended === true) {
                 countSuspended += 1;
             } else {
@@ -60,14 +59,20 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
     useEffect(() => {
         if (subscriptions.length === 0) get();
     }, []);
-
     
     useEffect(() => {
         const checkActive = async () => {
-            if (!subscriptions || subscriptions.length === 0) return; // Verifica se subscriptions existe e se não está vazio
+            if (!subscriptions || subscriptions.length === 0){
+                setOption(2);
+                return; // Verifica se subscriptions existe e se não está vazio
+            } 
 
             const { suspended, arrays } = await checkSuspended(subscriptions);
-            setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
+            if(arrays.noSuspendeds.length > 0){
+                setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
+            }else{
+                setInvoice(arrays.noSuspendeds?.recent_invoices[0]?.id);
+            }
             
             if (suspended) {
                 setOption(2); // Condição suspensa, não precisa continuar
@@ -80,7 +85,7 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
                     let hasActiveSubscription = false; // Variável local para controlar assinaturas ativas
 
                     // Cria uma lista de promessas para todas as requisições axios.get
-                    const requests = arrays.includedsPaid.map(async (subscription: any) => {
+                    const requests = arrays.includedsPaid?.map(async (subscription: any) => {
                         const urlCustomer = `/api/customers?customerId=${subscription.customer_id}`;
                         const response = await axios.get(urlCustomer, {
                             headers: {
@@ -113,8 +118,8 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
                     console.log(error);
                 }
             } else {
-                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending") {
-                    setOption(3); // arrays.includedsPaid.length === 0
+                if (arrays.noSuspendeds[0]?.recent_invoices[0]?.status === "pending" || arrays.noSuspendeds?.recent_invoices[0]?.status === "pending") {
+                    setOption(3);
                 } else {
                     setOption(2);
                 }
@@ -124,6 +129,8 @@ const VerificationSubscription = ({ email, setConsultant, subscriptions, setSubs
 
         checkActive();
     }, [subscriptions]);
+
+    console.log(subscriptions);
 
     return (
         <div>
