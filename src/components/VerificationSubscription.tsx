@@ -171,7 +171,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                                         !loading && option === 2 && (
                                             <div className="">
                                                 <p className="whitespace-normal text-lg block md:inline">Você não possui assinatura ativa.{" "}</p>
-                                                <button onClick={() => router.push(`/new-subscription?userId=${subscriptions[0].customer_id}`)}
+                                                <button onClick={() => router.push(`/new-subscription?userId=${customerId}`)}
                                                     className="text-blue-400 hover:underline"
                                                 >
                                                     <span className="text-lg">Criar uma nova assinatura.</span>
@@ -183,7 +183,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                                         !loading && option === 3 && (
                                             <div>
                                                 <p className="whitespace-normal text-lg  block md:inline">Erro ao pagar fatura.{" "}</p>
-                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}&invoiceId=${invoice}`)}
+                                                <button onClick={() => router.push(`/update-card?userId=${customerId}&invoiceId=${invoice}`)}
                                                     className="text-blue-400 hover:underline"
                                                 >
                                                     <span className="text-lg">Atualize seu método de pagamento.</span>
@@ -195,7 +195,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                                         !loading && option === 4 && (
                                             <div>
                                                 <p className="whitespace-normal text-lg  block md:inline">Erro com cartão de crédito.{" "}</p>
-                                                <button onClick={() => router.push(`/update-card?userId=${subscriptions[0].customer_id}`)}
+                                                <button onClick={() => router.push(`/update-card?userId=${customerId}`)}
                                                     className="text-blue-400 hover:underline"
                                                 >
                                                     <span className="text-lg">Atualize seu método de pagamento.</span>
@@ -215,7 +215,7 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
                         <h3 className="text-xl">Opções:</h3>
                         <ul className="mt-2 list-disc pl-8">
                             <li>
-                                <button onClick={() => { router.push(`/update-card?userId=${subscriptions[0].customer_id}`) }} className="text-blue-400">
+                                <button onClick={() => { router.push(`/update-card?userId=${customerId}`) }} className="text-blue-400">
                                     Trocar cartão de crédito
                                 </button>
                             </li>
