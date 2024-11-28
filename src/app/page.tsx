@@ -70,25 +70,25 @@ const Login = () => {
 
   return (
     <div>
-      <div className='flex flex-col max-w-[400px] mx-auto mt-20 gap-8 justify-center px-4'>
+      <div className='flex flex-col max-w-[450px] mx-auto mt-20 gap-8 justify-center px-4'>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Fieldset>
             <Legend><span className='text-white text-xl'>Login</span></Legend>
-            <Text><span className='text-base'>Faça login para verificar sua assinatura ou contratar um novo plano.</span></Text>
-            <FieldGroup>
+            <Text><span className='text-lg text-gray-400'>Faça login para verificar sua assinatura ou contratar um novo plano.</span></Text>
+            <FieldGroup className='pt-4'>
               <Field>
-                <Label><span className='text-white text-base'>E-mail:</span></Label>
+                <Label><span className='text-white text-lg'>E-mail:</span></Label>
                 <Input {...register('email')} type='text' />
               </Field>
               <Field>
-                <Label><span className='text-white text-base'>Senha:</span></Label>
+                <Label><span className='text-white text-lg'>Senha:</span></Label>
                 <Input {...register('password')} type='password' />
                 {error && (<div className='text-red-500 text-sm font-light mt-2' dangerouslySetInnerHTML={{ __html: error }} />)}
               </Field>
               <div className='flex justify-between'>
                 <Button type='submit' disabled={loading === true} className='hover:cursor-pointer min-w-32'>
                   {!loading ? (
-                    <span>Entrar</span>
+                    <span className='text-base'>Entrar</span>
                   ) : (
                     <Image
                       src={loadingIcon}
@@ -99,7 +99,7 @@ const Login = () => {
                     />
                   )}
                 </Button>
-                  <div className='text-end text-sm'>
+                  <div className='text-end text-base'>
                     <span>Ainda não é cliente pump?<br /><button type='button' onClick={() => router.push("/checkout")} className='text-blue-400 hover:underline'>Cadastre-se</button></span>
                   </div>
               </div>

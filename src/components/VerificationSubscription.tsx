@@ -144,7 +144,6 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
         checkActive();
     }, [subscriptions]);
 
-
     return (
         <div>
             <div className="text-center">

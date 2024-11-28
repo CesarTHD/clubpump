@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },
     });
-    console.log(response)
+    
     response.data.items.length === 0 ? res.status(500).json({ error: 'Nenhuma assinatura encontrada' }) : res.status(200).json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Nenhuma assinatura encontrada' });

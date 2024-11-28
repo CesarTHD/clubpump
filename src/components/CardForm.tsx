@@ -67,8 +67,6 @@ const CardForm = ({ userId, setStep }: any) => {
           setStep(3);
         }
 
-        console.log(subscription);
-
       } catch (err) {
         setLoading(false);
         setError("Erro ao configurar método de pagamento, verifique os dados do cartão de crédito.");

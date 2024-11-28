@@ -55,7 +55,6 @@ const CustomerForm = ({setUserId}: any) => {
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       });
       
-      console.log(res.data.id);
       if(res.data.id){
         setUserId(res.data.id);
       }

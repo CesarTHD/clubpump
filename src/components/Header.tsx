@@ -46,7 +46,7 @@ const Header = () => {
                         
                             <td className="-mt-16 md:mt-0">
                                 {user?.email ? (
-                                    <button onClick={() => { logout() }} className="text-blue-400 hover:underline">Fazer logout</button>
+                                    <button onClick={() => { logout() }} className="text-blue-400 text-lg hover:underline">Fazer logout</button>
                                 ) : (
                                     <div className="w-44"></div>
                                 )}

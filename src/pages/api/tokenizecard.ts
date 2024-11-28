@@ -41,7 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payment_token`, options);
         const card = await response.json()
         
-        console.log(card);
         if(card.id){
             return res.status(200).json({ card });
         }else{
