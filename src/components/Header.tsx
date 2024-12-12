@@ -27,26 +27,36 @@ const Header = () => {
                 <tbody>
                     <tr className="flex flex-col md:flex-row items-center justify-between">
                         <td>
-                            <h1 className="text-xl">Área do cliente</h1>
+                            <button
+                                onClick={() => {
+                                    if (path !== "/checkout") {
+                                        router.push("/home")
+                                    } else {
+                                        router.push("/");
+                                    }
+                                }}
+                                className="text-lg text-blue-300 hover:underline">
+                                Área do cliente
+                            </button>
                         </td>
                         <td>
                             <button onClick={() => {
-                                        if (path !== "/checkout") {
-                                            router.push("/home")
-                                        } else {
-                                            router.push("/");
-                                        }
-                                    }}
+                                if (path !== "/checkout") {
+                                    router.push("/home")
+                                } else {
+                                    router.push("/");
+                                }
+                            }}
                             // disabled={!user?.email}
                             >
                                 <Image src={"https://clubpump.com.br/wp-content/uploads/2023/08/FUNDO-ESCURO.png"} alt="Logo Club Pump" width={200} height={100} />
                             </button>
                         </td>
                         {isMounted &&
-                        
+
                             <td className="-mt-16 md:mt-0">
                                 {user?.email ? (
-                                    <button onClick={() => { logout() }} className="text-blue-400 text-lg hover:underline">Fazer logout</button>
+                                    <button onClick={() => { logout() }} className="text-blue-300 text-lg hover:underline">Fazer logout</button>
                                 ) : (
                                     <div className="w-44"></div>
                                 )}
