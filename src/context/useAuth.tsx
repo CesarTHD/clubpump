@@ -21,6 +21,9 @@ export const AuthProvider = ({ children }: any) => {
     });
 
     useEffect(() => {
+        if(!user) {
+            localStorage.removeItem('club.user');
+        }
         if (!user && path !== '/checkout') {
             router.push("/");
         };
