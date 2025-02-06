@@ -18,15 +18,19 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
     const router = useRouter();
 
     const normalizeSubscriptions = (subscriptions: any) => {
-        if (!subscriptions || subscriptions.reponse.data.error.length > 0) return [];
-        return Array.isArray(subscriptions) ? subscriptions : [subscriptions];
+        if (!subscriptions || subscriptions?.response?.data?.error?.length > 0) {
+            return [];
+        } else {
+            return Array.isArray(subscriptions) ? subscriptions : [subscriptions];
+        }
     };
 
     const activeSubscriptions: any = [];
     async function get() {
         try {
             const response = await getSubscriptions(email);
-            setSubscriptions(normalizeSubscriptions(response));
+            const normal = normalizeSubscriptions(response);
+            setSubscriptions(normal);
         } catch (error: any) {
             setError(error);
         } finally {
@@ -75,10 +79,12 @@ const VerificationSubscription = ({ email, subscriptions, setSubscriptions, user
             } 
             
             const { isAllSuspended, arrays } = await checkSuspended(subscriptions);
-            if(arrays.noSuspendeds.length > 0){
-                setInvoice(arrays.noSuspendeds[0]?.recent_invoices[0]?.id);
-            }else if (arrays.noSuspendeds){
-                setInvoice(arrays.noSuspendeds?.recent_invoices[0]?.id);
+            if(arrays?.noSuspendeds?.length > 0){
+                setInvoice(arrays?.noSuspendeds[0]?.recent_invoices[0]?.id);
+            }else if (!arrays?.noSuspendeds.length){
+                setInvoice([]);
+            }else{
+                setInvoice(arrays?.noSuspendeds?.recent_invoices[0]?.id);
             }
             
             if (isAllSuspended) {

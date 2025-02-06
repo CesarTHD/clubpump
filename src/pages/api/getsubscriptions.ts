@@ -11,6 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // const urlApi = `${process.env.NEXT_PUBLIC_API_URL}/subscriptions?query=customer_email%3A${email}&api_token=${API_TOKEN}`;
     const urlApi = `${process.env.NEXT_PUBLIC_API_URL}/subscriptions?query=customer_email%3A${email}&api_token=${API_TOKEN}`;
     const response = await axios.get(urlApi, {
       headers: { accept: 'application/json', 'content-type': 'application/json' },

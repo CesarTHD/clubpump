@@ -61,7 +61,10 @@ const CardForm = ({ userId, setStep }: any) => {
           headers: { accept: 'application/json', 'content-type': 'application/json', 'Cache-Control': 'no-cache' },
         });
 
-        if (subscription.data.errors.length > 0) {
+        
+        if (subscription.data?.errors?.length > 0) {
+          console.log(methodPay);
+          console.log(subscription);
           setError("Erro ao configurar método de pagamento, verifique os dados do cartão de crédito.")
         } else {
           setStep(3);
@@ -103,7 +106,7 @@ const CardForm = ({ userId, setStep }: any) => {
     if (rawValue.length >= 3) {
       rawValue = `${rawValue.slice(0, 2)}/${rawValue.slice(2)}`;
     }
-
+    console.log(rawValue)
     setExpirationDisplay(rawValue); // Atualiza o valor do input formatado
   };
 
